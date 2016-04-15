@@ -6,10 +6,10 @@ var jsesc = require("jsesc")
 var cssesc = require("cssesc")
 var rimraf = require("rimraf")
 var ansiup = require("ansi_up")
+var ngrok = require("ngrok")
 
 var Webpack = require("webpack")
 var WebpackExtract = require("extract-text-webpack-plugin")
-var NodeWebkitBuilder = require("nw-builder")
 var BrowserSync = require("browser-sync")
 var Inliner = require("inliner")
 
@@ -94,6 +94,14 @@ rimraf("./builds", function() {
                     notify: false,
                     port: PORT
                 })
+                print("Listening on " + chalk.underline("http://localhost:4444"))
+                ngrok.connect(PORT, function(error, url) {
+                    if(error) {
+                        console.log(error)
+                    } else {
+                        print("Listening on " + chalk.underline(url))
+                    }
+                })
             } else {
                 server.reload()
             }
@@ -103,14 +111,6 @@ rimraf("./builds", function() {
                     fs.writeFile("builds/web1/index.html", data)
                 })
             })
-            new NodeWebkitBuilder({
-                version: "v0.12.2",
-                platforms: ["win", "osx", "linux"],
-                files: ["./builds/web/**/**", "./package.json"],
-                buildType: function() {return ""},
-                cacheDir: "node_webkit_builds",
-                buildDir: "./builds",
-            }).build()
         }
     })
 })

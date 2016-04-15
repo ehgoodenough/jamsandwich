@@ -1,5 +1,5 @@
 {
-  "name": "Jam Sandwich",
+  "name": "jamsandwich",
   "version": "0.0.0",
   "description": "#LD35",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "Charity Kocemba <@cherryko>",
     "Devin Lind <@aku>",
     "Craig Tanis <Craig Tanis>",
-    "Joey Shiraef <@joeshiraef>",
+    "Joey Shiraef <@joeshiraef>"
   ],
   "dependencies": {
     "afloop": "^1.0.1",
@@ -47,6 +47,7 @@
     "inliner": "^1.6.1",
     "jsesc": "^0.5.0",
     "json-loader": "^0.5.4",
+    "ngrok": "^2.1.7",
     "node-sass": "^3.4.2",
     "nw-builder": "^2.1.0",
     "raw-loader": "^0.5.1",
