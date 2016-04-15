@@ -47,12 +47,6 @@ rimraf("./builds", function() {
                 {test: /\.(mp3|wav)$/i, loader: "url-loader"},
             ]
         },
-        node: {
-            fs: "empty"
-        },
-        resolve: {
-            root: ["./source"]
-        },
         plugins: [
             new WebpackExtract("css", "index.css"),
             new WebpackExtract("html", "index.html"),
