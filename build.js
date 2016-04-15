@@ -18,6 +18,7 @@ var NAME = require("./package.json").name
 var PATH = path.join(__dirname, "./source")
 var STAGE = yargs.argv.production ? "PRODUCTION" : "DEVELOPMENT"
 var MODE = yargs.argv._.indexOf("server") != -1 ? "SERVER" : yargs.argv._.indexOf("bundle") != -1 ? "BUNDLE" : null
+var NGROK = yargs.argv.ngrok
 
 var server = null
 
@@ -46,6 +47,9 @@ rimraf("./builds", function() {
                 {test: /\.(ttf|otf|woff|svg)$/i, loader: "url-loader"},
                 {test: /\.(mp3|wav)$/i, loader: "url-loader"},
             ]
+        },
+        node: {
+            fs: "empty", // for Pixi
         },
         plugins: [
             new WebpackExtract("css", "index.css"),
@@ -89,13 +93,15 @@ rimraf("./builds", function() {
                     port: PORT
                 })
                 print("Listening on " + chalk.underline("http://localhost:4444"))
-                ngrok.connect(PORT, function(error, url) {
-                    if(error) {
-                        console.log(error)
-                    } else {
-                        print("Listening on " + chalk.underline(url))
-                    }
-                })
+                if(NGROK) {
+                    ngrok.connect(PORT, function(error, url) {
+                        if(error) {
+                            console.log(error)
+                        } else {
+                            print("Listening on " + chalk.underline(url))
+                        }
+                    })
+                }
             } else {
                 server.reload()
             }
