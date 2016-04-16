@@ -38,7 +38,7 @@ export default class Scene extends Pixi.Container {
 
 const FRICTION = 0.7
 const AIR_FRICTION = 0.9
-const GRAVITY = 0.5
+const GRAVITY = 0.55
 const MAX_VELOCITY = 5
 
 export class Sprite extends Pixi.Sprite {
@@ -88,8 +88,11 @@ export class Wolf extends Sprite {
         
         this.velocity = new Pixi.Point()
         
-        this.speed = 4
+        this.speed = 2
         this.jump = 10
+        this.jumpheight = 0
+        
+        this.outfit = {}
     }
     update(delta) {
         if(Keyboard.isDown("A")
@@ -106,10 +109,10 @@ export class Wolf extends Sprite {
                 this.velocity.x = +MAX_VELOCITY
             }
         }
+        
         if(Keyboard.isDown("W")
         || Keyboard.isDown("<up>")) {
-            if(this.isOnGround == true) {
-                this.isOnGround = false
+            if(this.jumpheight == 0) {
                 this.velocity.y = -this.jump
             }
         }
@@ -119,13 +122,28 @@ export class Wolf extends Sprite {
         if(this.position.y + this.velocity.y > state.frame.height) {
             this.position.y = state.frame.height
             this.velocity.y = 0
-            this.isOnGround = true
+            this.jumpheight = 0
         }
         
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
         
-        if(this.isOnGround == true) {
+        if(this.velocity.y == 0) {
+            this.scale.x += (1 - this.scale.x) * 0.25
+            this.scale.y += (1 - this.scale.y) * 0.25
+        } else if(this.velocity.y < 0) {
+            this.scale.x += (0.8 - this.scale.x) * 0.25
+            this.scale.y += (1.2 - this.scale.y) * 0.25
+        } else if(this.velocity.y > 0) {
+            this.scale.x += (1.2 - this.scale.x) * 0.25
+            this.scale.y += (0.8 - this.scale.y) * 0.25
+        }
+        
+        if(this.velocity.y < 0) {
+            this.jumpheight += Math.abs(this.velocity.y)
+        }
+        
+        if(this.jumpheight == 0) {
             this.velocity.x *= FRICTION
         } else {
             this.velocity.x *= AIR_FRICTION
@@ -135,8 +153,8 @@ export class Wolf extends Sprite {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
-                        if(this.children.length > 0) {
-                            this.children[0].swap(child)
+                        if(!!this.outfit.hat) {
+                            this.outfit.hat.swap(child)
                         } else {
                             this.parent.removeChild(child)
                             this.addChild(child)
@@ -148,11 +166,18 @@ export class Wolf extends Sprite {
             }
         })
     }
+    addChild(object) {
+        super.addChild(object)
+        
+        if(object instanceof Item) {
+            this.outfit.hat = object
+        }
+    }
 }
 
 export class Item extends Sprite {
     constructor(item = new Object()) {
-        super(Pixi.Texture.fromImage(require("../../images/small.png")))
+        super(Pixi.Texture.fromImage(require("../../images/medium.png")))
         this.tint = item.color
         
         this.anchor.x = 0.5
@@ -163,7 +188,12 @@ export class Item extends Sprite {
     }
 }
 
+export class Block extends Sprite {
+    constructor(block = new Object()) {
+        super(Pixi.Texture.fromImage(require("../../images/black.png")))
+    }
+}
+
 // todo: collision with world
-// todo: stretch and shrink via velocity
 // todo: variable jumping, double jumping
 // todo: sliding down walls slowly
