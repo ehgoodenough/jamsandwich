@@ -17,7 +17,7 @@ export default class Scene extends Pixi.Container {
                             x: Math.floor(object.x / 32) * 32,
                             y: Math.floor(object.y / 32) * 32,
                             w: object.width, h: object.height,
-                            color: object.properties.color
+                            color: object.properties && object.properties.color || "000000"
                         }
                         if(object.height == 0) {
                             this.addChild(new Slab(block))
@@ -25,6 +25,25 @@ export default class Scene extends Pixi.Container {
                             this.addChild(new Block(block))
                         }
                     })
+                } else if(layer.type == "tilelayer" && layer.name == "blocks") {
+                    console.log(layer)
+                    for(var x = 0; x < layer.width; x++) {
+                        for(var y = 0; y < layer.height; y++) {
+                            var tile = layer.data[x * layer.height + y]
+                            if(tile != 0) {
+                                var block = {
+                                    x: x * 32, y: y * 32,
+                                    w: 32, h: 32,
+                                    color: "EEEEEE"
+                                }
+                                if(!!block.color) {
+                                    console.log(block)
+                                    this.addChild(new Block(block))
+                                }
+                            }
+                        }
+                    }
+                    console.log(layer.width * layer.height)
                 }
             })
         } else {
