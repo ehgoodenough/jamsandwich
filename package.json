@@ -1,11 +1,11 @@
 {
-  "name": "jamsandwich",
+  "name": "wearwolf",
   "version": "0.0.0",
   "description": "#LD35",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ehgoodenough/jamsandwich"
+    "url": "https://github.com/ehgoodenough/wearwolf"
   },
   "contributors": [
     "Andrew McPherson <@ehgoodenough>",
