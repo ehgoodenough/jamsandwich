@@ -4,96 +4,104 @@ import Keyboard from "../utility/Keyboard"
 const UNIT = 32
 
 export default class Scene extends Pixi.Container {
-    constructor(scene = new Object()) {
+    constructor(scene, frame) {
         super()
         
-        this.frame = scene.frame
+        this.frame = frame
         
-        if(!!scene.map) {
-            scene.map.layers.forEach((layer) => {
-                if(layer.type == "objectgroup" && layer.name == "blocks") {
-                    layer.objects.forEach((object) => {
-                        var block = {
-                            x: Math.floor(object.x / 32) * 32,
-                            y: Math.floor(object.y / 32) * 32,
-                            w: object.width, h: object.height,
-                            color: object.properties && object.properties.color || "000000"
-                        }
-                        if(object.height == 0) {
-                            this.addChild(new Slab(block))
-                        } else {
-                            this.addChild(new Block(block))
-                        }
-                    })
-                } else if(layer.type == "tilelayer" && layer.name == "blocks") {
-                    console.log(layer)
-                    for(var x = 0; x < layer.width; x++) {
-                        for(var y = 0; y < layer.height; y++) {
-                            var tile = layer.data[x * layer.height + y]
-                            if(tile != 0) {
-                                var block = {
-                                    x: x * 32, y: y * 32,
-                                    w: 32, h: 32,
-                                    color: "EEEEEE"
-                                }
-                                if(!!block.color) {
-                                    console.log(block)
-                                    this.addChild(new Block(block))
-                                }
-                            }
-                        }
-                    }
-                    console.log(layer.width * layer.height)
-                }
-            })
-        } else {
-            throw new Error("Scene requires a map")
+        var backgrounds = new Pixi.Container()
+        this.addChild(backgrounds)
+        
+        this.width = scene.world.width
+        this.height = scene.world.height
+        for(var key in scene.world.tiles) {
+            var tile = scene.world.tiles[key]
+            this.addChild(new Block({
+                x: tile.x * UNIT,
+                y: tile.y * UNIT,
+                w: UNIT, h: UNIT,
+                color: scene.tileset[tile.symbol],
+                isSlab: tile.symbol == "-",
+            }))
+        }
+        
+        for(var key in scene.backgrounds) {
+            var background = scene.backgrounds[key]
+            backgrounds.addChild(new Block({
+                x: background.x * UNIT,
+                y: background.y * UNIT,
+                w: background.w * UNIT,
+                h: background.h * UNIT,
+                color: background.color
+            }))
+        }
+        
+        for(var key in scene.entities) {
+            var entity = scene.entities[key]
+            this.addChild(new Entity({
+                x: entity.x * UNIT,
+                y: entity.y * UNIT,
+                color: entity.color,
+                character: "boss"
+            }))
         }
         
         this.addChild(new Player({
             position: {
                 x: 7 * 32,
-                y: 13 * 32
+                y: 10 * 32
             }
         }))
-        this.addChild(new Item({
-            color: 0xCC0000,
-            position: {
-                x: 20 * 32,
-                y: 7 * 32 - 2
-            }
-        }))
-        this.addChild(new Item({
-            color: 0x0000CC,
-            position: {
-                x: 10 * 32,
-                y: 9 * 32 - 2
-            }
-        }))
-        this.addChild(new Item({
-            color: 0xCC00CC,
-            position: {
-                x: 24 * 32,
-                y: 7 * 32
-            }
-        }))
-        this.addChild(new Item({
-            color: 0xCCCCCC,
-            position: {
-                x: 27 * 32,
-                y: 22 * 32
-            }
-        }))
+        // this.addChild(new Item({
+        //     color: 0xCC0000,
+        //     position: {
+        //         x: 20 * 32,
+        //         y: 7 * 32 - 2
+        //     }
+        // }))
+        // this.addChild(new Item({
+        //     color: 0x0000CC,
+        //     position: {
+        //         x: 10 * 32,
+        //         y: 9 * 32 - 2
+        //     }
+        // }))
+        // this.addChild(new Item({
+        //     color: 0xCC00CC,
+        //     position: {
+        //         x: 24 * 32,
+        //         y: 7 * 32
+        //     }
+        // }))
+        // this.addChild(new Item({
+        //     color: 0xCCCCCC,
+        //     position: {
+        //         x: 27 * 32,
+        //         y: 22 * 32
+        //     }
+        // }))
         
         this.snapCamera()
     }
     snapCamera() {
-        this.position.x = (this.player.position.x - (this.frame.width / 2)) * -1
-        this.position.y = (this.player.position.y - (this.frame.height * 0.66)) * -1
+        var x = (this.player.position.x - (this.frame.width / 2))
+        var y = (this.player.position.y - (this.frame.height * 0.66))
+        y = Math.min(y, this.height - this.frame.height)
+        x = Math.min(x, this.width - this.frame.width)
+        x = Math.max(x, 0)
+        x *= -1
+        y *= -1
+        this.position.x = x
+        this.position.y = y
     }
     panCamera() {
-        var x = -1 * (this.player.position.x - (this.frame.width / 2))
-        var y = -1 * (this.player.position.y - (this.frame.height * 0.66))
+        var x = (this.player.position.x - (this.frame.width / 2))
+        var y = (this.player.position.y - (this.frame.height * 0.66))
+        y = Math.min(y, this.height - this.frame.height)
+        x = Math.min(x, this.width - this.frame.width)
+        x = Math.max(x, 0)
+        x *= -1
+        y *= -1
         this.position.x += (x - this.position.x) * 0.05
         if(Math.abs(this.position.x - x) < 1) {
             this.position.x = x
@@ -118,6 +126,10 @@ export default class Scene extends Pixi.Container {
         super.addChild(object)
         if(object instanceof Player) {
             this.player = object
+        }
+        
+        if(object instanceof Entity) {
+            this[object.character] = object
         }
     }
 }
@@ -172,6 +184,26 @@ export class Sprite extends Pixi.Sprite {
 const FRICTION = 0.7
 const AIR_FRICTION = 0.9
 const GRAVITY = 0.55
+
+export class Entity extends Sprite {
+    constructor(entity) {
+        super(Pixi.Texture.fromImage(require("../../images/player.png")))
+        
+        this.position.x = entity.x
+        this.position.y = entity.y
+        
+        this.tint = entity.color || 0xFFFFFF
+        
+        this.anchor.x = 0.5
+        this.anchor.y = 1
+        
+        this.character = entity.character
+        if(this.character == "boss") {
+            this.scale.x = 1.2
+            this.scale.y = 1.2
+        }
+    }
+}
 
 export class Player extends Sprite {
     constructor(player) {
@@ -234,36 +266,52 @@ export class Player extends Sprite {
         // }
         
         // collision with the edges of the world.
-        // if(this.position.y + this.velocity.y > world.height) {
-        //     this.position.y = 0
-        //     this.velocity.y = 0
-        //     this.jumpheight = 0
-        // }
+        if(this.position.y + this.velocity.y > this.parent.height) {
+            this.velocity.y = 0
+            this.jumpheight = 0
+            this.isFalling = false
+            this.y1 = this.parent.height
+        }
+        if(this.x0 + this.velocity.x < 0) {
+            this.velocity.x = 0
+            this.x0 = 0
+        } if(this.x1 + this.velocity.x > this.parent.width) {
+            this.velocity.x = 0
+            this.x1 = this.parent.width
+        }
         
         // collision with the tiles of the world.
         this.parent.children.forEach((child) => {
             if(child instanceof Block) {
-                if(child.isIntersecting(this, new Pixi.Point(0, this.velocity.y))) {
-                    if(this.velocity.y > 0) {
-                        if(this.isFalling && this.jumpheight <= this.height && child instanceof Slab) {
-                            return
-                        } else {
-                            this.velocity.y = 0
-                            this.jumpheight = 0
-                            this.isFalling = false
-                            this.y1 = child.y0
+                if(!child.isPassable) {
+                    if(child.isIntersecting(this, {y: this.velocity.y})) {
+                        if(this.velocity.y > 0) {
+                            if(this.isFalling && this.jumpheight <= this.height && child.isSlab) {
+                                return
+                            } else {
+                                this.velocity.y = 0
+                                this.jumpheight = 0
+                                this.isFalling = false
+                                this.y1 = child.y0
+                            }
+                        } else if(this.velocity.y < 0) {
+                            if(child.isSlab) {
+                                return
+                            } else {
+                                this.velocity.y = 0
+                                this.y0 = child.y1
+                            }
                         }
-                    } else if(this.velocity.y < 0) {
-                        this.velocity.y = 0
-                        this.y0 = child.y1
-                    }
-                } if(child.isIntersecting(this, this.velocity)) {
-                    if(this.velocity.x > 0) {
-                        this.velocity.x = 0
-                        this.x1 = child.x0
-                    } else if(this.velocity.x < 0) {
-                        this.velocity.x = 0
-                        this.x0 = child.x1
+                    } if(child.isIntersecting(this, {x: this.velocity.x})) {
+                        if(!child.isSlab) {
+                            if(this.velocity.x > 0) {
+                                this.velocity.x = 0
+                                this.x1 = child.x0
+                            } else if(this.velocity.x < 0) {
+                                this.velocity.x = 0
+                                this.x0 = child.x1
+                            }
+                        }
                     }
                 }
             }
@@ -344,22 +392,13 @@ export class Block extends Sprite {
         this.anchor.x = 0
         this.anchor.y = 0
         
-        this.tint = parseInt(block.color, 16) + 0x010101
-    }
-}
-
-export class Slab extends Block {
-    constructor(slab) {
-        super(slab)
+        this.tint = block.color
         
-        this.scale.y = 0.1
-        this.position.y -= 32 * 0.1
-    }
-    isIntersecting(that, diff = {}) {
-        if(diff.y < 0) {
-            return false
-        } else {
-            return super.isIntersecting(that, diff)
+        this.isSlab = block.isSlab || false
+        this.isPassable = block.isPassable || false
+        
+        if(this.isSlab) {
+            this.scale.y = 0.25
         }
     }
 }
