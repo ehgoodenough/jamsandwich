@@ -22,18 +22,22 @@ var state = {
             }
             if(Keyboard.isJustDown("<space>")) {
                 if(this.cursor == 1) {
-                    state.scene = new Scene({
-                        map: require("./maps/city.json"),
-                        frame: state.frame,
-                    })
+                    this.startGame()
                 }
             }
+        },
+        startGame: function() {
+            state.scene = new Scene({
+                map: require("./maps/city.json"),
+                frame: state.frame,
+            })
         }
     }
 }
 
 if(STAGE == "DEVELOPMENT") {
     window.state = state
+    window.state.title.startGame()
 }
 
 //////////////////////
@@ -43,26 +47,9 @@ if(STAGE == "DEVELOPMENT") {
 import React from "react"
 import ReactDOM from "react-dom"
 
-import PixiRenderer from "./scripts/render/PixiRenderer.js"
+import GameScreen from "./scripts/render/GameScreen.js"
+import TitleScreen from "./scripts/render/TitleScreen.js"
 import AspectRatioFrame from "./scripts/render/AspectRatioFrame.js"
-
-class TitleScreen extends React.Component {
-    render() {
-        return (
-            <div className="title screen">
-                <h1><b>Wear</b>wolf</h1>
-                <h2>Check out this awful graphic design!</h2>
-                <hr/>
-                <div className={this.props.title.cursor == 0 ? "selected" : null}>
-                    Story (coming soon!)
-                    </div>
-                <div className={this.props.title.cursor == 1 ? "selected" : null}>
-                    Sandbox
-                </div>
-            </div>
-        )
-    }
-}
 
 class Mount extends React.Component {
     render() {
@@ -70,7 +57,7 @@ class Mount extends React.Component {
             return (
                 <AspectRatioFrame frame={this.state.frame}>
                     {!!this.state.scene ? (
-                        <PixiRenderer display={this.state.scene} frame={this.state.frame}/>
+                        <GameScreen scene={this.state.scene} frame={this.state.frame}/>
                     ) : (
                         <TitleScreen title={this.state.title}/>
                     )}
