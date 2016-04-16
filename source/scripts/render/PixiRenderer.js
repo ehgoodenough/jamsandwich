@@ -8,9 +8,8 @@ export default class PixiRenderer extends React.Component {
         )
     }
     componentDidMount() {
-        this.renderer = Pixi.autoDetectRenderer(this.props.frame.width, this.props.frame.height, {
-            transparent: true
-        })
+        this.renderer = Pixi.autoDetectRenderer(this.props.frame.width, this.props.frame.height, {transparent: true})
+        this.renderer.roundPixels = true
         
         this.refs.canvas.appendChild(this.renderer.view)
         this.renderer.render(this.props.display)
@@ -19,6 +18,3 @@ export default class PixiRenderer extends React.Component {
         this.renderer.render(this.props.display)
     }
 }
-
-// var display = new Pixi.Container()
-// display.addChild(new Pixi.Sprite(Pixi.Texture.fromImage(require("./images/black.png"))))

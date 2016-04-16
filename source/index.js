@@ -2,12 +2,19 @@
 ///// Initializing /////
 ///////////////////////
 
-var state = new Object({
+import Scene from "./scripts/game/Scene.js"
+
+var state = {
     frame: {
         width: 400,
-        height: 300
-    }
-})
+        height: 225,
+    },
+    scene: new Scene({
+        wolf: {},
+        world: {},
+        achievements: {},
+    })
+}
 
 if(STAGE == "DEVELOPMENT") {
     window.state = state
@@ -21,7 +28,6 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 import PixiRenderer from "./scripts/render/PixiRenderer.js"
-import ThreeRenderer from "./scripts/render/ThreeRenderer.js"
 import AspectRatioFrame from "./scripts/render/AspectRatioFrame.js"
 
 class Mount extends React.Component {
@@ -29,7 +35,7 @@ class Mount extends React.Component {
         if(!!this.state) {
             return (
                 <AspectRatioFrame frame={this.state.frame}>
-                    <div>Hello World!</div>
+                    <PixiRenderer frame={this.state.frame} display={this.state.scene}/>
                 </AspectRatioFrame>
             )
         } else {
@@ -50,5 +56,6 @@ import Loop from "./scripts/utility/Loop.js"
 import Keyboard from "./scripts/utility/Keyboard.js"
 
 var loop = new Loop(function(delta) {
+    state.scene.update(delta)
     render.setState(state)
 })
