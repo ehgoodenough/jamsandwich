@@ -4,17 +4,9 @@
 
 import Scene from "./scripts/game/Scene.js"
 
-var state = {
-    frame: {
-        width: 400,
-        height: 225,
-    },
-    scene: new Scene({
-        wolf: {},
-        world: {},
-        achievements: {},
-    })
-}
+window.state = {}
+window.state.frame = {width: 400, height: 225}
+window.state.scene = new Scene()
 
 if(STAGE == "DEVELOPMENT") {
     window.state = state
