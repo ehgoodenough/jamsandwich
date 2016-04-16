@@ -2,65 +2,77 @@ import Pixi from "pixi.js"
 import Keyboard from "../utility/Keyboard"
 
 export default class Scene extends Pixi.Container {
-    constructor() {
+    constructor(parameters = new Object()) {
         super()
+        
+        if(!!parameters.map) {
+            var height = parameters.map.height * parameters.map.tileheight
+            parameters.map.layers.forEach((layer) => {
+                if(layer.type == "objectgroup" && layer.name == "blocks") {
+                    layer.objects.forEach((object) => {
+                        var parameters = {
+                            x: object.x, y: object.y - height,
+                            w: object.width, h: object.height,
+                        }
+                        if(object.height == 0) {
+                            this.addChild(new Slab(parameters))
+                        } else {
+                            this.addChild(new Block(parameters))
+                        }
+                    })
+                }
+            })
+        } else {
+            throw new Error("Scene requires a map")
+        }
+        
         this.addChild(new Wolf({
             position: {
-                x: 200,
-                y: 90
+                x: 32 * 7,
+                y: -32
             }
         }))
-        this.addChild(new Item({
-            color: 0xCC0000,
-            position: {
-                x: 20,
-                y: state.frame.height - 64
+        // this.addChild(new Item({
+        //     color: 0xCC0000,
+        //     position: {
+        //         x: 20,
+        //         y: state.frame.height - 64
+        //     }
+        // }))
+        // this.addChild(new Item({
+        //     color: 0x00CC00,
+        //     position: {
+        //         x: state.frame.width - 20,
+        //         y: 100 - 5
+        //     }
+        // }))
+        // this.addChild(new Item({
+        //     color: 0x0000CC,
+        //     position: {
+        //         x: state.frame.width / 2,
+        //         y: state.frame.height
+        //     }
+        // }))
+        
+        this.snapCamera()
+    }
+    snapCamera() {
+        this.position.x = (this.wolf.position.x - (state.frame.width / 2)) * -1
+        this.position.y = (this.wolf.position.y - (state.frame.height * 0.66)) * -1
+    }
+    panCamera() {
+        var x = (this.wolf.position.x - (state.frame.width / 2)) * -1
+        var y = (this.wolf.position.y - (state.frame.height * 0.66)) * -1
+        this.position.x += (x - this.position.x) * 0.05
+        if(Math.abs(this.position.x - x) < 1) {
+            this.position.x = x
+        }
+        if(this.wolf.jumpheight == 0) {
+            this.position.y += (y - this.position.y) * 0.1
+            if(Math.abs(this.position.y - y) < 1) {
+                this.position.y = y
             }
-        }))
-        this.addChild(new Item({
-            color: 0x00CC00,
-            position: {
-                x: state.frame.width - 20,
-                y: 100 - 5
-            }
-        }))
-        this.addChild(new Item({
-            color: 0x0000CC,
-            position: {
-                x: state.frame.width / 2,
-                y: state.frame.height
-            }
-        }))
-        this.addChild(new Block({
-            position: {
-                x: 0,
-                y: state.frame.height
-            }
-        }))
-        this.addChild(new Block({
-            position: {
-                x: state.frame.width - 64,
-                y: state.frame.height
-            }
-        }))
-        this.addChild(new Slab({
-            position: {
-                x: 0,
-                y: 100
-            }
-        }))
-        this.addChild(new Slab({
-            position: {
-                x: state.frame.width - 64,
-                y: 100
-            }
-        }))
-        this.addChild(new Slab({
-            position: {
-                x: state.frame.width / 2 - 32,
-                y: 100
-            }
-        }))
+        }
     }
     update(delta) {
         this.children.forEach((child) => {
@@ -69,23 +81,7 @@ export default class Scene extends Pixi.Container {
             }
         })
         
-        if(!!this.wolf) {
-            var x = (this.wolf.position.x - (state.frame.width / 2)) * -1
-            var y = (this.wolf.position.y - (state.frame.height * 0.66)) * -1
-            if(y < 0) {
-                y = 0
-            }
-            this.position.x += (x - this.position.x) * 0.05
-            if(Math.abs(this.position.x - x) < 1) {
-                this.position.x = x
-            }
-            if(this.wolf.jumpheight == 0) {
-                this.position.y += (y - this.position.y) * 0.1
-                if(Math.abs(this.position.y - y) < 1) {
-                    this.position.y = y
-                }
-            }
-        }
+        this.panCamera()
     }
     addChild(object) {
         super.addChild(object)
@@ -137,7 +133,7 @@ export class Sprite extends Pixi.Sprite {
 
 export class Wolf extends Sprite {
     constructor(wolf) {
-        super(Pixi.Texture.fromImage(require("../../images/white.png")))
+        super(Pixi.Texture.fromImage(require("../../images/player.png")))
         
         this.anchor.x = 0.5
         this.anchor.y = 1
@@ -178,8 +174,8 @@ export class Wolf extends Sprite {
         
         this.velocity.y += GRAVITY
         
-        if(this.position.y + this.velocity.y > state.frame.height) {
-            this.position.y = state.frame.height
+        if(this.position.y + this.velocity.y > 0) {
+            this.position.y = 0
             this.velocity.y = 0
             this.jumpheight = 0
         }
@@ -262,13 +258,18 @@ export class Item extends Sprite {
 
 export class Block extends Sprite {
     constructor(block = new Object()) {
-        super(Pixi.Texture.fromImage(require("../../images/black.png")))
+        super(Pixi.Texture.fromImage(require("../../images/large.png")))
         
         this.anchor.x = 0
-        this.anchor.y = 1
+        this.anchor.y = 0
         
-        this.position.x = block.position.x
-        this.position.y = block.position.y
+        this.position.x = block.x
+        this.position.y = block.y
+        
+        this.scale.x = block.w / 32
+        this.scale.y = block.h / 32
+        
+        this.tint = 0x000000
     }
 }
 
@@ -276,7 +277,7 @@ export class Slab extends Block {
     constructor(slab) {
         super(slab)
         
-        this.scale.y = 0.1
+        this.scale.y = -0.1
     }
     isIntersecting(that, diff = {}) {
         if(diff.y < 0) {
@@ -289,6 +290,8 @@ export class Slab extends Block {
 
 // todo: fix high resolution breaking frame
 // todo: let players drop down from slabs
+// todo: fix players getting stuck in slabs when falling in them
 // todo: fix little bump when collide with block
-// todo: variable jumping, double jumping
-// todo: sliding down walls slowly
+// todo: fix jumping hitbox to be more forgiving
+// polish: variable jumping, double jumping?
+// polish: sliding down walls slowly?
