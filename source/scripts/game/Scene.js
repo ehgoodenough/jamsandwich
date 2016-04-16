@@ -5,14 +5,16 @@ export default class Scene extends Pixi.Container {
     constructor(parameters = new Object()) {
         super()
         
+        var height = parameters.map.height * parameters.map.tileheight
         if(!!parameters.map) {
-            var height = parameters.map.height * parameters.map.tileheight
             parameters.map.layers.forEach((layer) => {
                 if(layer.type == "objectgroup" && layer.name == "blocks") {
                     layer.objects.forEach((object) => {
                         var parameters = {
-                            x: object.x, y: object.y - height,
+                            x: Math.floor(object.x / 32) * 32,
+                            y: Math.floor(object.y / 32) * 32 - height,
                             w: object.width, h: object.height,
+                            color: object.properties.color
                         }
                         if(object.height == 0) {
                             this.addChild(new Slab(parameters))
@@ -29,30 +31,37 @@ export default class Scene extends Pixi.Container {
         this.addChild(new Wolf({
             position: {
                 x: 32 * 7,
-                y: -32
+                y: -128 - 32 * 7
             }
         }))
-        // this.addChild(new Item({
-        //     color: 0xCC0000,
-        //     position: {
-        //         x: 20,
-        //         y: state.frame.height - 64
-        //     }
-        // }))
-        // this.addChild(new Item({
-        //     color: 0x00CC00,
-        //     position: {
-        //         x: state.frame.width - 20,
-        //         y: 100 - 5
-        //     }
-        // }))
-        // this.addChild(new Item({
-        //     color: 0x0000CC,
-        //     position: {
-        //         x: state.frame.width / 2,
-        //         y: state.frame.height
-        //     }
-        // }))
+        this.addChild(new Item({
+            color: 0xCC0000,
+            position: {
+                x: 20 * 32,
+                y: 7 * 32 - height - 2
+            }
+        }))
+        this.addChild(new Item({
+            color: 0x0000CC,
+            position: {
+                x: 10 * 32,
+                y: 9 * 32 - height - 2
+            }
+        }))
+        this.addChild(new Item({
+            color: 0xCC00CC,
+            position: {
+                x: 24 * 32,
+                y: 7 * 32 - height
+            }
+        }))
+        this.addChild(new Item({
+            color: 0xCCCCCC,
+            position: {
+                x: 27 * 32,
+                y: 22 * 32 - height
+            }
+        }))
         
         this.snapCamera()
     }
@@ -269,7 +278,7 @@ export class Block extends Sprite {
         this.scale.x = block.w / 32
         this.scale.y = block.h / 32
         
-        this.tint = 0x000000
+        this.tint = parseInt(block.color, 16) + 0x010101
     }
 }
 
@@ -288,10 +297,10 @@ export class Slab extends Block {
     }
 }
 
-// todo: fix high resolution breaking frame
 // todo: let players drop down from slabs
 // todo: fix players getting stuck in slabs when falling in them
 // todo: fix little bump when collide with block
 // todo: fix jumping hitbox to be more forgiving
+// todo: fix collision bug; moving from one box to another, supposedly level.
 // polish: variable jumping, double jumping?
 // polish: sliding down walls slowly?

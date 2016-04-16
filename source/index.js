@@ -5,7 +5,7 @@
 import Scene from "./scripts/game/Scene.js"
 
 window.state = {}
-window.state.frame = {width: 400, height: 225}
+window.state.frame = {width: 400 * 1.5, height: 225 * 1.5}
 window.state.scene = new Scene({
     map: require("./maps/city.json")
 })
@@ -28,7 +28,7 @@ class Mount extends React.Component {
     render() {
         if(!!this.state) {
             return (
-                <AspectRatioFrame frame={this.state.frame}>
+                <AspectRatioFrame frame={this.state.frame} color="#5EC3D4">
                     <PixiRenderer frame={this.state.frame} display={this.state.scene}/>
                 </AspectRatioFrame>
             )
