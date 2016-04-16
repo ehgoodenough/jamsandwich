@@ -6,7 +6,9 @@ import Scene from "./scripts/game/Scene.js"
 
 window.state = {}
 window.state.frame = {width: 400, height: 225}
-window.state.scene = new Scene()
+window.state.scene = new Scene({
+    map: require("./maps/city.json")
+})
 
 if(STAGE == "DEVELOPMENT") {
     window.state = state
