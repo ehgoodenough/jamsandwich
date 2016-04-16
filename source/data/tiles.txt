@@ -11,9 +11,9 @@
   X X                   &                 &
   X-X       ---         &               --&
   X X                  &&                 &
+  X X                                     &
+  X-X      -----                       ---&
   X                                       &
-  X-       -----                       ---&
-                                          &
                                           &
 ooooooooooooooooooooooooooooooooo-----ooooo
 ooooooooooooooooooooooooooooooooo     ooooo

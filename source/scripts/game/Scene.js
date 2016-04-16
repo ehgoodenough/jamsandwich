@@ -42,7 +42,8 @@ export default class Scene extends Pixi.Container {
                 x: entity.x * UNIT,
                 y: entity.y * UNIT,
                 color: entity.color,
-                character: "boss"
+                character: entity.character,
+                dialogue: entity.dialogue
             }))
         }
         
@@ -52,34 +53,18 @@ export default class Scene extends Pixi.Container {
                 y: 10 * 32
             }
         }))
-        // this.addChild(new Item({
-        //     color: 0xCC0000,
-        //     position: {
-        //         x: 20 * 32,
-        //         y: 7 * 32 - 2
-        //     }
-        // }))
-        // this.addChild(new Item({
-        //     color: 0x0000CC,
-        //     position: {
-        //         x: 10 * 32,
-        //         y: 9 * 32 - 2
-        //     }
-        // }))
-        // this.addChild(new Item({
-        //     color: 0xCC00CC,
-        //     position: {
-        //         x: 24 * 32,
-        //         y: 7 * 32
-        //     }
-        // }))
-        // this.addChild(new Item({
-        //     color: 0xCCCCCC,
-        //     position: {
-        //         x: 27 * 32,
-        //         y: 22 * 32
-        //     }
-        // }))
+        
+        for(var key in scene.items) {
+            var item = scene.items[key]
+            this.addChild(new Item({
+                position: {
+                    x: item.x * UNIT,
+                    y: item.y * UNIT,
+                },
+                color: item.color,
+                name: item.name
+            }))
+        }
         
         this.snapCamera()
     }
@@ -201,6 +186,28 @@ export class Entity extends Sprite {
         if(this.character == "boss") {
             this.scale.x = 1.2
             this.scale.y = 1.2
+        } if(this.character == "partyboy") {
+            this.floor = this.position.y
+            this.position.y -= Math.random() * 20
+            this.vy = 0
+        }
+        
+        this.dialogue = entity.dialogue
+    }
+    update(delta) {
+        if(this.character == "partyboy") {
+            if(this.position.y == this.floor) {
+                this.vy = -10
+            }
+            
+            this.vy += GRAVITY
+            
+            if(this.position.y + this.vy >= this.floor) {
+                this.position.y = this.floor
+                this.vy = 0
+            }
+            
+            this.position.y += this.vy
         }
     }
 }
@@ -252,6 +259,23 @@ export class Player extends Sprite {
                 this.velocity.y = this.jumpforce
             }
         }
+        // ALLOW DANCING IN THE RAVE
+        if(this.position.x > 3 * UNIT
+        && this.position.x < 9 * UNIT
+        && this.position.y > 21 * UNIT) {
+            if(Keyboard.isDown("W")
+            || Keyboard.isDown("<up>")) {
+                if(this.jumpheight == 0) {
+                    this.velocity.y = this.jumpforce
+                }
+                if(this.outfit.hat && this.outfit.hat.name == "sunglasses") {
+                    console.log("PARTY")
+                } else {
+                    console.log("not cool enough")
+                }
+            }
+        }
+        
         if(Keyboard.isDown("S")
         || Keyboard.isDown("<down>")) {
             this.isFalling = true
@@ -353,6 +377,14 @@ export class Player extends Sprite {
                         }
                     }
                 }
+            } else if(child instanceof Entity) {
+                if(this.isIntersecting(child)) {
+                    if(Keyboard.isJustDown("<space>")) {
+                        if(child.dialogue instanceof Function) {
+                            console.log(child.dialogue())
+                        }
+                    }
+                }
             }
         })
     }
@@ -376,6 +408,8 @@ export class Item extends Sprite {
         
         this.anchor.x = 0.5
         this.anchor.y = 1
+        
+        this.name = item.name
     }
 }
 

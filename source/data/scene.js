@@ -25,7 +25,106 @@ export default {
         {
             x: 31,
             y: 17,
-            color: 0xF4A460
+            color: 0xF4A460,
+            character: "boss",
+            dialogue: function() {
+                return [
+                    "Hey!!",
+                    "You're late again!",
+                    "And what are you wearing?",
+                    "That isn't business professional attire at all!",
+                    "Remember, son, dress for the job you want.",
+                    "Right now, you look like a ...",
+                ]
+                return [
+                    "Oh, what a nice suit!",
+                    "You deserve a promotion!",
+                ]
+            }
+        },
+        {
+            x: 38,
+            y: 8,
+            color: 0xFF69B4,
+            character: "secretary",
+            dialogue: function() {
+                return [
+                    "Oh, Wolfgang!",
+                    "Did you hear?",
+                    "Uh huh! It was Malinda!",
+                    "And then she...",
+                    "Yup. That's right.",
+                    "...",
+                    "No that's not what I heard at all!",
+                    "Because Sarah says...",
+                    "Oh, my phone is blowing up. One sec.",
+                ]
+            }
+        },
+        {
+            x: 6,
+            y: 28,
+            color: 0x551A8B,
+            character: "partyboy",
+            dialogue: function() {
+                return "PAAAAAAAARRRTY!"
+            }
+        },
+        {
+            x: 3,
+            y: 28,
+            color: 0x44146f,
+            character: "partyboy",
+            dialogue: function() {
+                return "PA-PA-PARRRTY!"
+            }
+        },
+        {
+            x: 4,
+            y: 28,
+            color: 0x2A0D45,
+            character: "partyboy",
+            dialogue: function() {
+                return "PAAA~AAARTY!"
+            }
+        },
+        {
+            x: 7,
+            y: 28,
+            color: 0x551A8B,
+            character: "partyboy",
+            dialogue: function() {
+                return "I, too, enjoy parties."
+            }
+        },
+        {
+            x: 5.5,
+            y: 28,
+            color: 0x44146f,
+            character: "partyboy",
+            dialogue: function() {
+                return "PARTY PARTY PARTY!"
+            }
+        }
+    ],
+    items: [
+        {
+            x: 29,
+            y: 8,
+            color: 0xCC0000,
+            name: "suit",
+        },
+        {
+            x: 23,
+            y: 8,
+            color: 0x551A8B,
+            name: "sunglasses"
+        },
+        {
+            x: 14,
+            y: 11,
+            color: 0x0000CC,
+            name: "pants"
         }
     ]
 }
