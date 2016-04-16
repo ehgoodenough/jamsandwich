@@ -4,19 +4,24 @@ import Keyboard from "../utility/Keyboard"
 export default class Scene extends Pixi.Container {
     constructor() {
         super()
-        this.addChild(new Wolf())
+        this.addChild(new Wolf({
+            position: {
+                x: 200,
+                y: 90
+            }
+        }))
         this.addChild(new Item({
             color: 0xCC0000,
             position: {
                 x: 20,
-                y: state.frame.height
+                y: state.frame.height - 64
             }
         }))
         this.addChild(new Item({
             color: 0x00CC00,
             position: {
                 x: state.frame.width - 20,
-                y: state.frame.height
+                y: 100 - 5
             }
         }))
         this.addChild(new Item({
@@ -24,6 +29,36 @@ export default class Scene extends Pixi.Container {
             position: {
                 x: state.frame.width / 2,
                 y: state.frame.height
+            }
+        }))
+        this.addChild(new Block({
+            position: {
+                x: 0,
+                y: state.frame.height
+            }
+        }))
+        this.addChild(new Block({
+            position: {
+                x: state.frame.width - 64,
+                y: state.frame.height
+            }
+        }))
+        this.addChild(new Slab({
+            position: {
+                x: 0,
+                y: 100
+            }
+        }))
+        this.addChild(new Slab({
+            position: {
+                x: state.frame.width - 64,
+                y: 100
+            }
+        }))
+        this.addChild(new Slab({
+            position: {
+                x: state.frame.width / 2 - 32,
+                y: 100
             }
         }))
     }
@@ -46,19 +81,19 @@ export class Sprite extends Pixi.Sprite {
         return this.position.x - (this.width * this.anchor.x) 
     }
     get x1() {
-        return this.position.x + (this.width * this.anchor.x) 
+        return this.position.x + (this.width * (1 - this.anchor.x))
     }
     get y0() {
         return this.position.y - (this.height * this.anchor.y) 
     }
     get y1() {
-        return this.position.y + (this.height * this.anchor.y) 
+        return this.position.y + (this.height * (1 - this.anchor.y))
     }
-    isIntersecting(that) {
-        return this.x0 < that.x1
-            && this.x1 > that.x0
-            && this.y0 < that.y1
-            && this.y1 > that.y0
+    isIntersecting(that, diff = {}) {
+        return this.x0 < that.x1 + (diff.x || 0)
+            && this.x1 > that.x0 + (diff.x || 0) 
+            && this.y0 < that.y1 + (diff.y || 0)
+            && this.y1 > that.y0 + (diff.y || 0)
     }
     swap(that) {
         var x = this.position.x
@@ -77,14 +112,14 @@ export class Sprite extends Pixi.Sprite {
 }
 
 export class Wolf extends Sprite {
-    constructor() {
+    constructor(wolf) {
         super(Pixi.Texture.fromImage(require("../../images/white.png")))
         
         this.anchor.x = 0.5
         this.anchor.y = 1
         
-        this.position.x = 200
-        this.position.y = 100
+        this.position.x = wolf.position.x
+        this.position.y = wolf.position.y
         
         this.velocity = new Pixi.Point()
         
@@ -110,8 +145,8 @@ export class Wolf extends Sprite {
             }
         }
         
-        if(Keyboard.isDown("W")
-        || Keyboard.isDown("<up>")) {
+        if(Keyboard.isJustDown("W")
+        || Keyboard.isJustDown("<up>")) {
             if(this.jumpheight == 0) {
                 this.velocity.y = -this.jump
             }
@@ -124,20 +159,39 @@ export class Wolf extends Sprite {
             this.velocity.y = 0
             this.jumpheight = 0
         }
+        if(this.position.x > state.frame.width) {
+            this.position.x = state.frame.width
+            this.velocity.x = 0
+        }
+        if(this.position.x < 0) {
+            this.position.x = 0
+            this.velocity.x = 0
+        }
+        
+        this.parent.children.forEach((child) => {
+            if(child instanceof Block) {
+                if(child.isIntersecting(this, {y: this.velocity.y})) {
+                    this.velocity.y = 0
+                    this.jumpheight = 0
+                } if(child.isIntersecting(this, this.velocity)) {
+                    this.velocity.x = 0
+                }
+            }
+        })
         
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
         
-        if(this.velocity.y == 0) {
-            this.scale.x += (1 - this.scale.x) * 0.25
-            this.scale.y += (1 - this.scale.y) * 0.25
-        } else if(this.velocity.y < 0) {
-            this.scale.x += (0.8 - this.scale.x) * 0.25
-            this.scale.y += (1.2 - this.scale.y) * 0.25
-        } else if(this.velocity.y > 0) {
-            this.scale.x += (1.2 - this.scale.x) * 0.25
-            this.scale.y += (0.8 - this.scale.y) * 0.25
-        }
+        // if(this.velocity.y == 0) {
+        //     this.scale.x += (1 - this.scale.x) * 0.25
+        //     this.scale.y += (1 - this.scale.y) * 0.25
+        // } else if(this.velocity.y < 0) {
+        //     this.scale.x += (0.8 - this.scale.x) * 0.25
+        //     this.scale.y += (1.2 - this.scale.y) * 0.25
+        // } else if(this.velocity.y > 0) {
+        //     this.scale.x += (1.2 - this.scale.x) * 0.25
+        //     this.scale.y += (0.8 - this.scale.y) * 0.25
+        // }
         
         if(this.velocity.y < 0) {
             this.jumpheight += Math.abs(this.velocity.y)
@@ -191,9 +245,31 @@ export class Item extends Sprite {
 export class Block extends Sprite {
     constructor(block = new Object()) {
         super(Pixi.Texture.fromImage(require("../../images/black.png")))
+        
+        this.anchor.x = 0
+        this.anchor.y = 1
+        
+        this.position.x = block.position.x
+        this.position.y = block.position.y
     }
 }
 
-// todo: collision with world
+export class Slab extends Block {
+    constructor(slab) {
+        super(slab)
+        
+        this.scale.y = 0.1
+    }
+    isIntersecting(that, diff = {}) {
+        if(diff.y < 0) {
+            return false
+        } else {
+            return super.isIntersecting(that, diff)
+        }
+    }
+}
+
+// todo: let players drop down from slabs
+// todo: fix little bump when collide with block
 // todo: variable jumping, double jumping
 // todo: sliding down walls slowly
