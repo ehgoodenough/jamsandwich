@@ -4,10 +4,14 @@
 
 import Scene from "./scripts/game/Scene.js"
 
-window.state = {}
-window.state.frame = {width: 400 * 1.5, height: 225 * 1.5}
-window.state.scene = new Scene({
-    map: require("./maps/city.json")
+var state = {}
+state.frame = {
+    width: 600,
+    height: 337.5
+}
+state.scene = new Scene({
+    map: require("./maps/city.json"),
+    frame: state.frame,
 })
 
 if(STAGE == "DEVELOPMENT") {
@@ -29,7 +33,7 @@ class Mount extends React.Component {
         if(!!this.state) {
             return (
                 <AspectRatioFrame frame={this.state.frame} color="#5EC3D4">
-                    <PixiRenderer frame={this.state.frame} display={this.state.scene}/>
+                    <PixiRenderer display={this.state.scene} frame={this.state.frame}/>
                 </AspectRatioFrame>
             )
         } else {
@@ -47,7 +51,6 @@ var render = ReactDOM.render(<Mount/>, document.getElementById("mount"))
 //////////////////
 
 import Loop from "./scripts/utility/Loop.js"
-import Keyboard from "./scripts/utility/Keyboard.js"
 
 var loop = new Loop(function(delta) {
     state.scene.update(delta)
