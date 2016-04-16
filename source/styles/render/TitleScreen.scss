@@ -1,0 +1,29 @@
+.title.screen {
+    padding: 64px;
+    text-align: center;
+    
+    h1 {
+        
+        b {
+            color: #C00;
+        }
+    }
+    
+    h2 {
+        font-size: 12px;
+    }
+    
+    hr {
+        margin: 32px auto;
+        width: 320px;
+        
+        border: 3px dashed #C00;
+    }
+    
+    .selected {
+        color: #C00;
+        &::before {
+            content: "> ";
+        }
+    }
+}

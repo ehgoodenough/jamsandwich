@@ -1,4 +1,5 @@
-@import "./styles/Font.scss";
+@import "./styles/utility/Font.scss";
+@include font(comfortaa);
 @include font(tiny);
 
 * {
@@ -12,6 +13,9 @@
 
 html {
     color: #EEE;
-    font-family: tiny;
+    font-family: comfortaa;
     background-color: #111;
 }
+
+@import "./styles/render/TitleScreen.scss";
+@import "./styles/render/GameScreen.scss";
