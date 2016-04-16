@@ -68,6 +68,30 @@ export default class Scene extends Pixi.Container {
                 child.update(delta)
             }
         })
+        
+        if(!!this.wolf) {
+            var x = (this.wolf.position.x - (state.frame.width / 2)) * -1
+            var y = (this.wolf.position.y - (state.frame.height * 0.66)) * -1
+            if(y < 0) {
+                y = 0
+            }
+            this.position.x += (x - this.position.x) * 0.05
+            if(Math.abs(this.position.x - x) < 1) {
+                this.position.x = x
+            }
+            if(this.wolf.jumpheight == 0) {
+                this.position.y += (y - this.position.y) * 0.1
+                if(Math.abs(this.position.y - y) < 1) {
+                    this.position.y = y
+                }
+            }
+        }
+    }
+    addChild(object) {
+        super.addChild(object)
+        if(object instanceof Wolf) {
+            this.wolf = object
+        }
     }
 }
 
@@ -159,14 +183,6 @@ export class Wolf extends Sprite {
             this.velocity.y = 0
             this.jumpheight = 0
         }
-        if(this.position.x > state.frame.width) {
-            this.position.x = state.frame.width
-            this.velocity.x = 0
-        }
-        if(this.position.x < 0) {
-            this.position.x = 0
-            this.velocity.x = 0
-        }
         
         this.parent.children.forEach((child) => {
             if(child instanceof Block) {
@@ -195,6 +211,8 @@ export class Wolf extends Sprite {
         
         if(this.velocity.y < 0) {
             this.jumpheight += Math.abs(this.velocity.y)
+        } else if(this.velocity.y > 0) {
+            this.jumpheight = -1
         }
         
         if(this.jumpheight == 0) {
@@ -269,6 +287,7 @@ export class Slab extends Block {
     }
 }
 
+// todo: fix high resolution breaking frame
 // todo: let players drop down from slabs
 // todo: fix little bump when collide with block
 // todo: variable jumping, double jumping
