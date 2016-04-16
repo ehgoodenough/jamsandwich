@@ -7,7 +7,24 @@ export default class Scene extends Pixi.Container {
         this.addChild(new Wolf())
         this.addChild(new Item({
             color: 0xCC0000,
-            position: {x: 20, y: state.frame.height}
+            position: {
+                x: 20,
+                y: state.frame.height
+            }
+        }))
+        this.addChild(new Item({
+            color: 0x00CC00,
+            position: {
+                x: state.frame.width - 20,
+                y: state.frame.height
+            }
+        }))
+        this.addChild(new Item({
+            color: 0x0000CC,
+            position: {
+                x: state.frame.width / 2,
+                y: state.frame.height
+            }
         }))
     }
     update(delta) {
@@ -20,7 +37,7 @@ export default class Scene extends Pixi.Container {
 }
 
 const FRICTION = 0.7
-const NO_FRICTION = 0.9
+const AIR_FRICTION = 0.9
 const GRAVITY = 0.5
 const MAX_VELOCITY = 5
 
@@ -36,6 +53,26 @@ export class Sprite extends Pixi.Sprite {
     }
     get y1() {
         return this.position.y + (this.height * this.anchor.y) 
+    }
+    isIntersecting(that) {
+        return this.x0 < that.x1
+            && this.x1 > that.x0
+            && this.y0 < that.y1
+            && this.y1 > that.y0
+    }
+    swap(that) {
+        var x = this.position.x
+        var y = this.position.y
+        this.position.x = that.position.x
+        this.position.y = that.position.y
+        that.position.x = x
+        that.position.y = y
+        
+        var parent = this.parent
+        this.parent.removeChild(this)
+        that.parent.addChild(this)
+        that.parent.removeChild(that)
+        parent.addChild(that)
     }
 }
 
@@ -70,8 +107,7 @@ export class Wolf extends Sprite {
             }
         }
         if(Keyboard.isDown("W")
-        || Keyboard.isDown("<up>")
-        || Keyboard.isDown("<space>")) {
+        || Keyboard.isDown("<up>")) {
             if(this.isOnGround == true) {
                 this.isOnGround = false
                 this.velocity.y = -this.jump
@@ -92,27 +128,25 @@ export class Wolf extends Sprite {
         if(this.isOnGround == true) {
             this.velocity.x *= FRICTION
         } else {
-            this.velocity.x *= NO_FRICTION
+            this.velocity.x *= AIR_FRICTION
         }
         
         this.parent.children.forEach((child) => {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
-                    console.log("collision!")
+                    if(Keyboard.isJustDown("<space>")) {
+                        if(this.children.length > 0) {
+                            this.children[0].swap(child)
+                        } else {
+                            this.parent.removeChild(child)
+                            this.addChild(child)
+                            child.position.x = 0
+                            child.position.y = -this.height
+                        }
+                    }
                 }
             }
         })
-    }
-    isIntersecting(that) {
-        // return this.x0 < sprite.x1
-        //     && this.x1 > sprite.x0
-        //     && this.y0 < sprite.y1
-        //     && this.y1 > sprite.y0
-        if(this.x1 < that.x0) {return false}
-        if(this.x0 > that.x1) {return false}
-        if(this.y1 < that.y0) {return false}
-        if(this.y0 > that.y1) {return false}
-        return true
     }
 }
 
@@ -129,7 +163,6 @@ export class Item extends Sprite {
     }
 }
 
-// todo: can pick up stuff
 // todo: collision with world
 // todo: stretch and shrink via velocity
 // todo: variable jumping, double jumping
