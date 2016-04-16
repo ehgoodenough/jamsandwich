@@ -1,4 +1,5 @@
 const BREATHE = 1000
+const VOLUME = 0.75
 
 export default class Jukebox {
     constructor(musics) {
@@ -12,7 +13,7 @@ export default class Jukebox {
                 throw new Error("Jukebox only accepts Audio")
             }
             
-            music.volume = 0.75
+            music.volume = VOLUME
             music.onended = () => {
                 window.setTimeout(() => {
                     this.musics.push(this.musics.shift())
