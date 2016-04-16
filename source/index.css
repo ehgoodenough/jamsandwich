@@ -1,4 +1,4 @@
-@import "./styles/Font.scss";
+@import "./styles/utility/Font.scss";
 @include font(tiny);
 
 * {
@@ -15,3 +15,5 @@ html {
     font-family: tiny;
     background-color: #111;
 }
+
+@import "./styles/game/TitleScreen.scss";
