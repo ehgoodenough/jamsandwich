@@ -4,77 +4,89 @@ import Keyboard from "../utility/Keyboard"
 const UNIT = 32
 
 export default class Scene extends Pixi.Container {
-    constructor(scene = new Object()) {
+    constructor(scene, frame) {
         super()
         
-        this.frame = scene.frame
+        this.frame = frame
         
-        if(!!scene.map) {
-            scene.map.layers.forEach((layer) => {
-                if(layer.type == "objectgroup" && layer.name == "blocks") {
-                    layer.objects.forEach((object) => {
-                        var block = {
-                            x: Math.floor(object.x / 32) * 32,
-                            y: Math.floor(object.y / 32) * 32,
-                            w: object.width, h: object.height,
-                            color: object.properties.color
-                        }
-                        if(object.height == 0) {
-                            this.addChild(new Slab(block))
-                        } else {
-                            this.addChild(new Block(block))
-                        }
-                    })
-                }
-            })
-        } else {
-            throw new Error("Scene requires a map")
+        var backgrounds = new Pixi.Container()
+        this.addChild(backgrounds)
+        
+        this.width = scene.world.width
+        this.height = scene.world.height
+        for(var key in scene.world.tiles) {
+            var tile = scene.world.tiles[key]
+            this.addChild(new Block({
+                x: tile.x * UNIT,
+                y: tile.y * UNIT,
+                w: UNIT, h: UNIT,
+                color: scene.tileset[tile.symbol],
+                isSlab: tile.symbol == "-",
+            }))
+        }
+        
+        for(var key in scene.backgrounds) {
+            var background = scene.backgrounds[key]
+            backgrounds.addChild(new Block({
+                x: background.x * UNIT,
+                y: background.y * UNIT,
+                w: background.w * UNIT,
+                h: background.h * UNIT,
+                color: background.color
+            }))
+        }
+        
+        for(var key in scene.entities) {
+            var entity = scene.entities[key]
+            this.addChild(new Entity({
+                x: entity.x * UNIT,
+                y: entity.y * UNIT,
+                color: entity.color,
+                character: entity.character,
+                dialogue: entity.dialogue
+            }))
         }
         
         this.addChild(new Player({
             position: {
                 x: 7 * 32,
-                y: 13 * 32
+                y: 10 * 32
             }
         }))
-        this.addChild(new Item({
-            color: 0xCC0000,
-            position: {
-                x: 20 * 32,
-                y: 7 * 32 - 2
-            }
-        }))
-        this.addChild(new Item({
-            color: 0x0000CC,
-            position: {
-                x: 10 * 32,
-                y: 9 * 32 - 2
-            }
-        }))
-        this.addChild(new Item({
-            color: 0xCC00CC,
-            position: {
-                x: 24 * 32,
-                y: 7 * 32
-            }
-        }))
-        this.addChild(new Item({
-            color: 0xCCCCCC,
-            position: {
-                x: 27 * 32,
-                y: 22 * 32
-            }
-        }))
+        
+        for(var key in scene.items) {
+            var item = scene.items[key]
+            this.addChild(new Item({
+                position: {
+                    x: item.x * UNIT,
+                    y: item.y * UNIT,
+                },
+                color: item.color,
+                name: item.name
+            }))
+        }
         
         this.snapCamera()
     }
     snapCamera() {
-        this.position.x = (this.player.position.x - (this.frame.width / 2)) * -1
-        this.position.y = (this.player.position.y - (this.frame.height * 0.66)) * -1
+        var x = (this.player.position.x - (this.frame.width / 2))
+        var y = (this.player.position.y - (this.frame.height * 0.66))
+        y = Math.min(y, this.height - this.frame.height)
+        x = Math.min(x, this.width - this.frame.width)
+        x = Math.max(x, 0)
+        x *= -1
+        y *= -1
+        this.position.x = x
+        this.position.y = y
     }
     panCamera() {
-        var x = -1 * (this.player.position.x - (this.frame.width / 2))
-        var y = -1 * (this.player.position.y - (this.frame.height * 0.66))
+        var x = (this.player.position.x - (this.frame.width / 2))
+        var y = (this.player.position.y - (this.frame.height * 0.66))
+        y = Math.min(y, this.height - this.frame.height)
+        x = Math.min(x, this.width - this.frame.width)
+        x = Math.max(x, 0)
+        x *= -1
+        y *= -1
         this.position.x += (x - this.position.x) * 0.05
         if(Math.abs(this.position.x - x) < 1) {
             this.position.x = x
@@ -93,12 +105,20 @@ export default class Scene extends Pixi.Container {
             }
         })
         
+        if(!!this.dialogue) {
+            this.dialogue.update(delta)
+        }
+        
         this.panCamera()
     }
     addChild(object) {
         super.addChild(object)
         if(object instanceof Player) {
             this.player = object
+        }
+        
+        if(object instanceof Entity) {
+            this[object.character] = object
         }
     }
 }
@@ -154,6 +174,75 @@ const FRICTION = 0.7
 const AIR_FRICTION = 0.9
 const GRAVITY = 0.55
 
+export class Entity extends Sprite {
+    constructor(entity) {
+        super(Pixi.Texture.fromImage(require("../../images/player.png")))
+        
+        this.position.x = entity.x
+        this.position.y = entity.y
+        
+        this.tint = entity.color || 0xFFFFFF
+        
+        this.anchor.x = 0.5
+        this.anchor.y = 1
+        
+        this.character = entity.character
+        if(this.character == "boss") {
+            this.scale.x = 1.5
+            this.scale.y = 1.5
+            this.floor = this.position.y
+            this.vy = 0
+        } if(this.character == "partyboy") {
+            this.floor = this.position.y
+            this.position.y -= Math.random() * 20
+            this.vy = 0
+        }
+        
+        this.dialogue = entity.dialogue
+    }
+    update(delta) {
+        if(this.character == "partyboy") {
+            if(this.position.y == this.floor) {
+                this.vy = -10
+            }
+            
+            this.vy += GRAVITY
+            
+            if(this.position.y + this.vy >= this.floor) {
+                this.position.y = this.floor
+                this.vy = 0
+            }
+            
+            this.position.y += this.vy
+        } else if(this.character == "boss") {
+            if(this.isAngry == true) {
+                if(this.position.y == this.floor) {
+                    this.vy = -5
+                }
+                
+                this.vy += GRAVITY
+                
+                if(this.position.y + this.vy >= this.floor) {
+                    this.position.y = this.floor
+                    this.vy = 0
+                }
+                
+                this.position.y += this.vy
+            } else {
+                this.position.y = this.floor
+            }
+        } else if(this.character == "secretary") {
+            this.timer = this.timer || 0
+            
+            this.timer += delta
+            
+            this.rotation = this.timer < 2 ? 45 : 0
+            
+            this.timer %= 5
+        }
+    }
+}
+
 export class Player extends Sprite {
     constructor(player) {
         super(Pixi.Texture.fromImage(require("../../images/player.png")))
@@ -176,34 +265,65 @@ export class Player extends Sprite {
         this.acceleration = 2
         
         this.jumpheight = 0
+        
+        this.achievements = {}
+        
+        // if(STAGE == "DEVELOPMENT") {
+        //     this.hasBeenScolded = true
+        // }
     }
     update(delta) {
-        // poll input for moving.
-        if(Keyboard.isDown("A")
-        || Keyboard.isDown("<left>")) {
-            this.velocity.x -= this.acceleration
-            if(this.velocity.x < -this.maxvelocity.x) {
-                this.velocity.x = -this.maxvelocity.x
+        if(!!this.parent.dialogue) {
+            if(Keyboard.isDown("<space>")) {
+                this.parent.dialogue.update(delta * 2)
             }
-        }
-        if(Keyboard.isDown("D")
-        || Keyboard.isDown("<right>")) {
-            this.velocity.x += this.acceleration
-            if(this.velocity.x > +this.maxvelocity.x) {
-                this.velocity.x = +this.maxvelocity.x
+            if(Keyboard.isJustDown("<space>")) {
+                this.parent.dialogue.finish()
             }
-        }
-        
-        // poll input for jumping.
-        if(Keyboard.isJustDown("W")
-        || Keyboard.isJustDown("<up>")) {
-            if(this.jumpheight == 0) {
-                this.velocity.y = this.jumpforce
+        } else {
+            // poll input for moving.
+            if(Keyboard.isDown("A")
+            || Keyboard.isDown("<left>")) {
+                this.velocity.x -= this.acceleration
+                if(this.velocity.x < -this.maxvelocity.x) {
+                    this.velocity.x = -this.maxvelocity.x
+                }
             }
-        }
-        if(Keyboard.isDown("S")
-        || Keyboard.isDown("<down>")) {
-            this.isFalling = true
+            if(Keyboard.isDown("D")
+            || Keyboard.isDown("<right>")) {
+                this.velocity.x += this.acceleration
+                if(this.velocity.x > +this.maxvelocity.x) {
+                    this.velocity.x = +this.maxvelocity.x
+                }
+            }
+            
+            // poll input for jumping.
+            if(Keyboard.isJustDown("W")
+            || Keyboard.isJustDown("<up>")) {
+                if(this.jumpheight == 0) {
+                    this.velocity.y = this.jumpforce
+                }
+            }
+            // ALLOW DANCING IN THE RAVE
+            if(this.position.x > 3 * UNIT
+            && this.position.x < 9 * UNIT
+            && this.position.y > 21 * UNIT) {
+                if(Keyboard.isDown("W")
+                || Keyboard.isDown("<up>")) {
+                    if(this.jumpheight == 0) {
+                        this.velocity.y = this.jumpforce
+                    }
+                    if(this.outfit.hat && this.outfit.hat.name == "sunglasses") {
+                        this.achievements.party = true
+                        this.parent.message = "PARTY ANIMAL!!"
+                    }
+                }
+            }
+            
+            if(Keyboard.isDown("S")
+            || Keyboard.isDown("<down>")) {
+                this.isFalling = true
+            }
         }
         
         // applying acceleration by gravity.
@@ -215,36 +335,52 @@ export class Player extends Sprite {
         // }
         
         // collision with the edges of the world.
-        // if(this.position.y + this.velocity.y > world.height) {
-        //     this.position.y = 0
-        //     this.velocity.y = 0
-        //     this.jumpheight = 0
-        // }
+        if(this.position.y + this.velocity.y > this.parent.height) {
+            this.velocity.y = 0
+            this.jumpheight = 0
+            this.isFalling = false
+            this.y1 = this.parent.height
+        }
+        if(this.x0 + this.velocity.x < 0) {
+            this.velocity.x = 0
+            this.x0 = 0
+        } if(this.x1 + this.velocity.x > this.parent.width) {
+            this.velocity.x = 0
+            this.x1 = this.parent.width
+        }
         
         // collision with the tiles of the world.
         this.parent.children.forEach((child) => {
             if(child instanceof Block) {
-                if(child.isIntersecting(this, new Pixi.Point(0, this.velocity.y))) {
-                    if(this.velocity.y > 0) {
-                        if(this.isFalling && this.jumpheight <= this.height && child instanceof Slab) {
-                            return
-                        } else {
-                            this.velocity.y = 0
-                            this.jumpheight = 0
-                            this.isFalling = false
-                            this.y1 = child.y0
+                if(!child.isPassable) {
+                    if(child.isIntersecting(this, {y: this.velocity.y})) {
+                        if(this.velocity.y > 0) {
+                            if(this.isFalling && this.jumpheight <= this.height && child.isSlab) {
+                                return
+                            } else {
+                                this.velocity.y = 0
+                                this.jumpheight = 0
+                                this.isFalling = false
+                                this.y1 = child.y0
+                            }
+                        } else if(this.velocity.y < 0) {
+                            if(child.isSlab) {
+                                return
+                            } else {
+                                this.velocity.y = 0
+                                this.y0 = child.y1
+                            }
                         }
-                    } else if(this.velocity.y < 0) {
-                        this.velocity.y = 0
-                        this.y0 = child.y1
-                    }
-                } if(child.isIntersecting(this, this.velocity)) {
-                    if(this.velocity.x > 0) {
-                        this.velocity.x = 0
-                        this.x1 = child.x0
-                    } else if(this.velocity.x < 0) {
-                        this.velocity.x = 0
-                        this.x0 = child.x1
+                    } if(child.isIntersecting(this, {x: this.velocity.x})) {
+                        if(!child.isSlab) {
+                            if(this.velocity.x > 0) {
+                                this.velocity.x = 0
+                                this.x1 = child.x0
+                            } else if(this.velocity.x < 0) {
+                                this.velocity.x = 0
+                                this.x0 = child.x1
+                            }
+                        }
                     }
                 }
             }
@@ -276,24 +412,68 @@ export class Player extends Sprite {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
-                        if(!!this.outfit.hat) {
-                            this.outfit.hat.swap(child)
+                        if(child.name == "suit" && this.parent.secretary.timer > 2 && !this.hasWornSuit) {
+                            this.parent.dialogue = new Dialogue(["Hey! Don't touch that! It's the boss's!"], this.parent.secretary.tint, this.parent)
                         } else {
-                            this.parent.removeChild(child)
-                            this.addChild(child)
-                            child.position.x = 0
-                            child.position.y = -this.height
+                            if(!!this.outfit.hat) {
+                                this.outfit.hat.swap(child)
+                            } else {
+                                this.parent.removeChild(child)
+                                this.addChild(child)
+                                child.position.x = 0
+                                child.position.y = -this.height
+                            }
+                        }
+                    }
+                }
+            } else if(child instanceof Entity) {
+                if(this.isIntersecting(child)) {
+                    if(Keyboard.isJustDown("<space>")) {
+                        if(child.dialogue instanceof Function) {
+                            this.parent.dialogue = new Dialogue(child.dialogue(this), child.tint, this.parent)
                         }
                     }
                 }
             }
         })
+        
+        if(!this.hasBeenScolded) {
+            if(this.position.x > 26 * UNIT) {
+                this.hasBeenScolded = true
+                this.parent.boss.isAngry = true
+                this.parent.dialogue = new Dialogue([
+                    "Hey!!",
+                    "You're late again!",
+                    "And what are you wearing?",
+                    () => {
+                        this.parent.boss.isAngry = false
+                    },
+                    "That isn't business professional attire at all!",
+                    "Remember, son, dress for the job you want.",
+                    "Right now, you look " + this.description + "!! :(",
+                ], 0xF4A460, this.parent)
+                
+            }
+        }
     }
     addChild(object) {
         super.addChild(object)
         
         if(object instanceof Item) {
             this.outfit.hat = object
+            
+            if(this.outfit.hat.name == "suit") {
+                this.hasWornSuit = true
+            }
+        }
+    }
+    get description() {
+        if(!this.outfit.hat) {
+            return "practically naked"
+        } else if(this.outfit.hat.name == "sunglasses") {
+            return "hungover"
+        } else if(this.outfit.hat.name == "pants") {
+            return "far too casual"
         }
     }
 }
@@ -309,6 +489,8 @@ export class Item extends Sprite {
         
         this.anchor.x = 0.5
         this.anchor.y = 1
+        
+        this.name = item.name
     }
 }
 
@@ -325,30 +507,46 @@ export class Block extends Sprite {
         this.anchor.x = 0
         this.anchor.y = 0
         
-        this.tint = parseInt(block.color, 16) + 0x010101
-    }
-}
-
-export class Slab extends Block {
-    constructor(slab) {
-        super(slab)
+        this.tint = block.color
         
-        this.scale.y = 0.1
-        this.position.y -= 32 * 0.1
-    }
-    isIntersecting(that, diff = {}) {
-        if(diff.y < 0) {
-            return false
-        } else {
-            return super.isIntersecting(that, diff)
+        this.isSlab = block.isSlab || false
+        this.isPassable = block.isPassable || false
+        
+        if(this.isSlab) {
+            this.scale.y = 0.25
         }
     }
 }
 
-// todo: let players drop down from slabs
-// todo: fix collision bug; moving from one box to another, supposedly level.
-// design: load items and wolf from tiled
-// design: show achievements along the side
-// design: hardcode accomplishing achievements
-// polish: variable jumping, double jumping?
-// polish: sliding down walls slowly?
+export class Dialogue {
+    constructor(texts, color, scene) {
+        this.texts = texts
+        this.color = color
+        this.pointer = 1
+        
+        this.scene = scene
+    }
+    update(delta) {
+        this.pointer += 30 * delta
+    }
+    finish() {
+        if(this.texts.length > 0 && this.texts[0].length < this.pointer) {
+            this.pointer = 1
+            this.texts.shift()
+            if(this.texts.length == 0) {
+                delete this.scene.dialogue
+            } else if(this.texts[0] instanceof Function) {
+                this.texts[0]()
+                this.texts.shift()
+                if(this.texts.length == 0) {
+                    delete this.scene.dialogue
+                }
+            }
+        }
+    }
+    get text() {
+        if(this.texts.length > 0) {
+            return this.texts[0].substring(0, this.pointer)
+        }
+    }
+}

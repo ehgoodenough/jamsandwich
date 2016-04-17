@@ -22,17 +22,64 @@
     text-shadow: $shadow;
 }
 
+@keyframes scroll {
+    from {
+        left: 600px;
+    }
+    to {
+        left: -3000px;
+    }
+}
+
 .game.screen {
-    position: absolute;
+    
     .message {
-        left: 0px;
-        right: 0px;
-        bottom: 16px;
+        top: 0px;
+        left: 600px;
+        position: absolute;
+        
+        color: red;
+        font-size: 300px;
+        white-space: nowrap;
+        @include stroke(2px, #000);
+        
+        animation-name: scroll;
+        animation-duration: 5s;
+        animation-timing-function: linear;
+    }
+    
+    .dialogue-box {
+        left: 16px;
+        right: 16px;
         z-index: 999;
         position: absolute;
         
-        font-size: 1.5em;
-        font-weight: bold;
-        text-align: center;
+        overflow: hidden;
+        border-radius: 4px;
+        background-color: rgba(44, 44, 44, 0.95);
+        
+        transition-property: top;
+        transition-duration: 0.1s;
+        
+        .portrait {
+            width: 64px;
+            height: 64px;
+        }
+        
+        .text {
+            top: 0px;
+            left: 64px;
+            bottom: 0px;
+            padding: 24px;
+            position: absolute;
+        }
+    }
+    
+    .achievement-list {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        
+        @include stroke(2, #000);
     }
 }

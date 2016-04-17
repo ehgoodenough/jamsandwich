@@ -4,6 +4,8 @@
 
 import Scene from "./scripts/game/Scene.js"
 
+import scene from "./data/scene.js"
+
 var state = {
     frame: {
         width: 600,
@@ -27,10 +29,7 @@ var state = {
             }
         },
         startGame: function() {
-            state.scene = new Scene({
-                map: require("./maps/city.json"),
-                frame: state.frame,
-            })
+            state.scene = new Scene(scene, state.frame)
         }
     }
 }

@@ -1,0 +1,29 @@
+  X 
+  X                     &&&&&&&&&&&&&&&&&&&
+  X-XXXXXXXXXXX         &                 &
+  X X                   &                 &
+  X X                   &                 &
+  X-X                   &                 &
+  X X                   &                 &
+  X X                   &                 &
+  X-X                ---&&&&&&&&&&&&&&&---&
+  X X                   &                 &
+  X X                   &                 &
+  X-X       ---         &               --&
+  X X                  &&                 &
+  X X                                     &
+  X-X      -----                       ---&
+  X                                       &
+                                          &
+ooooooooooooooooooooooooooooooooo-----ooooo
+ooooooooooooooooooooooooooooooooo     ooooo
+ooooooooooooooo ooooooooooooooooo     ooooo
+oooooooooooooooooooooo oooooooooo-----ooooo
+oo                                    ooooo
+oo                                    ooooo
+oo      oooooooo oooooooooooooooo-----ooooo
+oo      oooooooooooooooooo oooooo     ooooo
+oo    --ooooooooooooooooooooooooooooooooooo
+oo      ooooooooooooooooooooooooooooooooooo
+oo      ooooooooooooooooooooooooooooooooooo
+ooooooooooooooooooooooooooooooooooooooooooo
