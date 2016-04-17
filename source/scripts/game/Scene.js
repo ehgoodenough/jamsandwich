@@ -188,8 +188,10 @@ export class Entity extends Sprite {
         
         this.character = entity.character
         if(this.character == "boss") {
-            this.scale.x = 1.2
-            this.scale.y = 1.2
+            this.scale.x = 1.5
+            this.scale.y = 1.5
+            this.floor = this.position.y
+            this.vy = 0
         } if(this.character == "partyboy") {
             this.floor = this.position.y
             this.position.y -= Math.random() * 20
@@ -212,6 +214,23 @@ export class Entity extends Sprite {
             }
             
             this.position.y += this.vy
+        } else if(this.character == "boss") {
+            if(this.isAngry == true) {
+                if(this.position.y == this.floor) {
+                    this.vy = -5
+                }
+                
+                this.vy += GRAVITY
+                
+                if(this.position.y + this.vy >= this.floor) {
+                    this.position.y = this.floor
+                    this.vy = 0
+                }
+                
+                this.position.y += this.vy
+            } else {
+                this.position.y = this.floor
+            }
         }
     }
 }
@@ -238,11 +257,13 @@ export class Player extends Sprite {
         this.acceleration = 2
         
         this.jumpheight = 0
+        
+        this.achievements = {}
     }
     update(delta) {
         if(!!this.parent.dialogue) {
             if(Keyboard.isDown("<space>")) {
-                this.parent.dialogue.update(delta)
+                this.parent.dialogue.update(delta * 2)
             }
             if(Keyboard.isJustDown("<space>")) {
                 this.parent.dialogue.finish()
@@ -394,18 +415,46 @@ export class Player extends Sprite {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
                         if(child.dialogue instanceof Function) {
-                            this.parent.dialogue = new Dialogue(child.dialogue(), child.tint, this.parent)
+                            this.parent.dialogue = new Dialogue(child.dialogue(this), child.tint, this.parent)
                         }
                     }
                 }
             }
         })
+        
+        if(!this.hasBeenScolded) {
+            if(this.position.x > 26 * UNIT) {
+                this.hasBeenScolded = true
+                this.parent.boss.isAngry = true
+                this.parent.dialogue = new Dialogue([
+                    "Hey!!",
+                    "You're late again!",
+                    "And what are you wearing?",
+                    () => {
+                        this.parent.boss.isAngry = false
+                    },
+                    "That isn't business professional attire at all!",
+                    "Remember, son, dress for the job you want.",
+                    "Right now, you look " + this.description + "!! :(",
+                ], 0xF4A460, this.parent)
+                
+            }
+        }
     }
     addChild(object) {
         super.addChild(object)
         
         if(object instanceof Item) {
             this.outfit.hat = object
+        }
+    }
+    get description() {
+        if(!this.outfit.hat) {
+            return "practically naked"
+        } else if(this.outfit.hat.name == "sunglasses") {
+            return "hungover"
+        } else if(this.outfit.hat.name == "pants") {
+            return "far too casual"
         }
     }
 }
@@ -462,12 +511,17 @@ export class Dialogue {
         this.pointer += 30 * delta
     }
     finish() {
-        if(this.texts.length > 0
-        && this.texts[0].length < this.pointer) {
+        if(this.texts.length > 0 && this.texts[0].length < this.pointer) {
             this.pointer = 1
             this.texts.shift()
             if(this.texts.length == 0) {
                 delete this.scene.dialogue
+            } else if(this.texts[0] instanceof Function) {
+                this.texts[0]()
+                this.texts.shift()
+                if(this.texts.length == 0) {
+                    delete this.scene.dialogue
+                }
             }
         }
     }

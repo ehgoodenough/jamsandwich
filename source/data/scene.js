@@ -27,19 +27,23 @@ export default {
             y: 17,
             color: 0xF4A460,
             character: "boss",
-            dialogue: function() {
-                return [
-                    "Hey!!",
-                    "You're late again!",
-                    "And what are you wearing?",
-                    "That isn't business professional attire at all!",
-                    "Remember, son, dress for the job you want.",
-                    "Right now, you look like a ...",
-                ]
-                return [
-                    "Oh, what a nice suit!",
-                    "You deserve a promotion!",
-                ]
+            dialogue: function(player) {
+                if(player.achievements.promotion) {
+                    return [
+                        "Congrats on the promotion! You'll make us proud."
+                    ]
+                } else if(player.outfit.hat && player.outfit.hat.name == "suit") {
+                    player.achievements.promotion = true
+                    return [
+                        "Oh, what a nice suit!",
+                        "You deserve a promotion!",
+                    ]
+                } else {
+                    return [
+                        "Remember, son, dress for the job you want.",
+                        "Right now, you look " + player.description + "!",
+                    ]
+                }
             }
         },
         {

@@ -15,7 +15,6 @@ export default class GameScreen extends React.Component {
 
 class DialogueBox extends React.Component {
     render() {
-        console.log(this.props.dialogue)
         return (
             <div className="dialogue-box" style={this.style}>
                 <div className="portrait" style={this.portrait_style}/>
