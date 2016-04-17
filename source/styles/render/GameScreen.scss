@@ -23,7 +23,7 @@
 }
 
 .game.screen {
-    position: absolute;
+    
     .message {
         left: 0px;
         right: 0px;
@@ -34,5 +34,32 @@
         font-size: 1.5em;
         font-weight: bold;
         text-align: center;
+    }
+    
+    .dialogue-box {
+        left: 16px;
+        right: 16px;
+        z-index: 999;
+        position: absolute;
+        
+        overflow: hidden;
+        border-radius: 4px;
+        background-color: rgba(44, 44, 44, 0.95);
+        
+        transition-property: top;
+        transition-duration: 0.1s;
+        
+        .portrait {
+            width: 64px;
+            height: 64px;
+        }
+        
+        .text {
+            top: 0px;
+            left: 64px;
+            bottom: 0px;
+            padding: 24px;
+            position: absolute;
+        }
     }
 }

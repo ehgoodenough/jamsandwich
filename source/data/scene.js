@@ -67,7 +67,7 @@ export default {
             color: 0x551A8B,
             character: "partyboy",
             dialogue: function() {
-                return "PAAAAAAAARRRTY!"
+                return ["PAAAAAAAARRRTY!"]
             }
         },
         {
@@ -76,7 +76,7 @@ export default {
             color: 0x44146f,
             character: "partyboy",
             dialogue: function() {
-                return "PA-PA-PARRRTY!"
+                return ["PA-PA-PARRRTY!"]
             }
         },
         {
@@ -85,16 +85,7 @@ export default {
             color: 0x2A0D45,
             character: "partyboy",
             dialogue: function() {
-                return "PAAA~AAARTY!"
-            }
-        },
-        {
-            x: 7,
-            y: 28,
-            color: 0x551A8B,
-            character: "partyboy",
-            dialogue: function() {
-                return "I, too, enjoy parties."
+                return ["PAAA~AAARTY!"]
             }
         },
         {
@@ -103,9 +94,18 @@ export default {
             color: 0x44146f,
             character: "partyboy",
             dialogue: function() {
-                return "PARTY PARTY PARTY!"
+                return ["PARTY PARTY PARTY!"]
             }
-        }
+        },
+        {
+            x: 7,
+            y: 28,
+            color: 0x551A8B,
+            character: "partyboy",
+            dialogue: function() {
+                return ["I, too, like to party."]
+            }
+        },
     ],
     items: [
         {

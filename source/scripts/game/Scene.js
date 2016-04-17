@@ -105,6 +105,10 @@ export default class Scene extends Pixi.Container {
             }
         })
         
+        if(!!this.dialogue) {
+            this.dialogue.update(delta)
+        }
+        
         this.panCamera()
     }
     addChild(object) {
@@ -236,49 +240,58 @@ export class Player extends Sprite {
         this.jumpheight = 0
     }
     update(delta) {
-        // poll input for moving.
-        if(Keyboard.isDown("A")
-        || Keyboard.isDown("<left>")) {
-            this.velocity.x -= this.acceleration
-            if(this.velocity.x < -this.maxvelocity.x) {
-                this.velocity.x = -this.maxvelocity.x
+        if(!!this.parent.dialogue) {
+            if(Keyboard.isDown("<space>")) {
+                this.parent.dialogue.update(delta)
             }
-        }
-        if(Keyboard.isDown("D")
-        || Keyboard.isDown("<right>")) {
-            this.velocity.x += this.acceleration
-            if(this.velocity.x > +this.maxvelocity.x) {
-                this.velocity.x = +this.maxvelocity.x
+            if(Keyboard.isJustDown("<space>")) {
+                this.parent.dialogue.finish()
             }
-        }
-        
-        // poll input for jumping.
-        if(Keyboard.isJustDown("W")
-        || Keyboard.isJustDown("<up>")) {
-            if(this.jumpheight == 0) {
-                this.velocity.y = this.jumpforce
+        } else {
+            // poll input for moving.
+            if(Keyboard.isDown("A")
+            || Keyboard.isDown("<left>")) {
+                this.velocity.x -= this.acceleration
+                if(this.velocity.x < -this.maxvelocity.x) {
+                    this.velocity.x = -this.maxvelocity.x
+                }
             }
-        }
-        // ALLOW DANCING IN THE RAVE
-        if(this.position.x > 3 * UNIT
-        && this.position.x < 9 * UNIT
-        && this.position.y > 21 * UNIT) {
-            if(Keyboard.isDown("W")
-            || Keyboard.isDown("<up>")) {
+            if(Keyboard.isDown("D")
+            || Keyboard.isDown("<right>")) {
+                this.velocity.x += this.acceleration
+                if(this.velocity.x > +this.maxvelocity.x) {
+                    this.velocity.x = +this.maxvelocity.x
+                }
+            }
+            
+            // poll input for jumping.
+            if(Keyboard.isJustDown("W")
+            || Keyboard.isJustDown("<up>")) {
                 if(this.jumpheight == 0) {
                     this.velocity.y = this.jumpforce
                 }
-                if(this.outfit.hat && this.outfit.hat.name == "sunglasses") {
-                    console.log("PARTY")
-                } else {
-                    console.log("not cool enough")
+            }
+            // ALLOW DANCING IN THE RAVE
+            if(this.position.x > 3 * UNIT
+            && this.position.x < 9 * UNIT
+            && this.position.y > 21 * UNIT) {
+                if(Keyboard.isDown("W")
+                || Keyboard.isDown("<up>")) {
+                    if(this.jumpheight == 0) {
+                        this.velocity.y = this.jumpforce
+                    }
+                    if(this.outfit.hat && this.outfit.hat.name == "sunglasses") {
+                        console.log("PARTY")
+                    } else {
+                        console.log("not cool enough")
+                    }
                 }
             }
-        }
-        
-        if(Keyboard.isDown("S")
-        || Keyboard.isDown("<down>")) {
-            this.isFalling = true
+            
+            if(Keyboard.isDown("S")
+            || Keyboard.isDown("<down>")) {
+                this.isFalling = true
+            }
         }
         
         // applying acceleration by gravity.
@@ -381,7 +394,7 @@ export class Player extends Sprite {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
                         if(child.dialogue instanceof Function) {
-                            console.log(child.dialogue())
+                            this.parent.dialogue = new Dialogue(child.dialogue(), child.tint, this.parent)
                         }
                     }
                 }
@@ -433,6 +446,34 @@ export class Block extends Sprite {
         
         if(this.isSlab) {
             this.scale.y = 0.25
+        }
+    }
+}
+
+export class Dialogue {
+    constructor(texts, color, scene) {
+        this.texts = texts
+        this.color = color
+        this.pointer = 1
+        
+        this.scene = scene
+    }
+    update(delta) {
+        this.pointer += 30 * delta
+    }
+    finish() {
+        if(this.texts.length > 0
+        && this.texts[0].length < this.pointer) {
+            this.pointer = 1
+            this.texts.shift()
+            if(this.texts.length == 0) {
+                delete this.scene.dialogue
+            }
+        }
+    }
+    get text() {
+        if(this.texts.length > 0) {
+            return this.texts[0].substring(0, this.pointer)
         }
     }
 }
