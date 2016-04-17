@@ -8,6 +8,8 @@ export default class GameScreen extends React.Component {
             <div className="game screen">
                 <PixiRenderer display={this.props.scene} frame={this.props.frame}/>
                 <DialogueBox dialogue={this.props.scene.dialogue}/>
+                <AchievementList achievements={this.props.scene.player.achievements}/>
+                <div className="message" key={this.props.scene.message}>{this.props.scene.message}</div>
             </div>
         )
     }
@@ -46,5 +48,16 @@ class DialogueBox extends React.Component {
         if(!!this.props.dialogue) {
             return this.props.dialogue.text
         }
+    }
+}
+
+class AchievementList extends React.Component {
+    render() {
+        return (
+            <div className="achievement-list">
+                <div style={{color: this.props.achievements.party ? "red" : "white"}}>Party Animal</div>
+                <div style={{color: this.props.achievements.promotion ? "red" : "white"}}>Corporate Ladder</div>
+            </div>
+        )
     }
 }

@@ -268,9 +268,9 @@ export class Player extends Sprite {
         
         this.achievements = {}
         
-        if(STAGE == "DEVELOPMENT") {
-            this.hasBeenScolded = true
-        }
+        // if(STAGE == "DEVELOPMENT") {
+        //     this.hasBeenScolded = true
+        // }
     }
     update(delta) {
         if(!!this.parent.dialogue) {
@@ -314,9 +314,8 @@ export class Player extends Sprite {
                         this.velocity.y = this.jumpforce
                     }
                     if(this.outfit.hat && this.outfit.hat.name == "sunglasses") {
-                        console.log("PARTY")
-                    } else {
-                        console.log("not cool enough")
+                        this.achievements.party = true
+                        this.parent.message = "PARTY ANIMAL!!"
                     }
                 }
             }
@@ -413,7 +412,7 @@ export class Player extends Sprite {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
-                        if(child.name == "suit" && this.parent.secretary.timer > 2) {
+                        if(child.name == "suit" && this.parent.secretary.timer > 2 && !this.hasWornSuit) {
                             this.parent.dialogue = new Dialogue(["Hey! Don't touch that! It's the boss's!"], this.parent.secretary.tint, this.parent)
                         } else {
                             if(!!this.outfit.hat) {
@@ -462,6 +461,10 @@ export class Player extends Sprite {
         
         if(object instanceof Item) {
             this.outfit.hat = object
+            
+            if(this.outfit.hat.name == "suit") {
+                this.hasWornSuit = true
+            }
         }
     }
     get description() {
@@ -547,11 +550,3 @@ export class Dialogue {
         }
     }
 }
-
-// todo: let players drop down from slabs
-// todo: fix collision bug; moving from one box to another, supposedly level.
-// design: load items and wolf from tiled
-// design: show achievements along the side
-// design: hardcode accomplishing achievements
-// polish: variable jumping, double jumping?
-// polish: sliding down walls slowly?

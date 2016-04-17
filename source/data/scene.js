@@ -33,10 +33,13 @@ export default {
                         "Congrats on the promotion! You'll make us proud."
                     ]
                 } else if(player.outfit.hat && player.outfit.hat.name == "suit") {
-                    player.achievements.promotion = true
                     return [
                         "Oh, what a nice suit!",
                         "You deserve a promotion!",
+                        () => {
+                            player.achievements.promotion = true
+                            player.parent.message = "CORPORATE LADDER"
+                        }
                     ]
                 } else {
                     return [
