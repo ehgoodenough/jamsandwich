@@ -51,8 +51,13 @@ export default {
             y: 8,
             color: 0xFF69B4,
             character: "secretary",
-            dialogue: function() {
-                return [
+            dialogue: function(player) {
+                if(player.outfit.hat && player.outfit.hat.name == "suit") {
+                    return [
+                        "Hey, Wolfgang! Nice suit!"
+                    ]
+                } else {
+                    return [
                     "Oh, Wolfgang!",
                     "Did you hear?",
                     "Uh huh! It was Malinda!",
@@ -62,7 +67,8 @@ export default {
                     "No that's not what I heard at all!",
                     "Because Sarah says...",
                     "Oh, my phone is blowing up. One sec.",
-                ]
+                    ]
+                }
             }
         },
         {

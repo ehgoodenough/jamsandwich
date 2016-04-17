@@ -231,6 +231,14 @@ export class Entity extends Sprite {
             } else {
                 this.position.y = this.floor
             }
+        } else if(this.character == "secretary") {
+            this.timer = this.timer || 0
+            
+            this.timer += delta
+            
+            this.rotation = this.timer < 2 ? 45 : 0
+            
+            this.timer %= 5
         }
     }
 }
@@ -259,6 +267,10 @@ export class Player extends Sprite {
         this.jumpheight = 0
         
         this.achievements = {}
+        
+        if(STAGE == "DEVELOPMENT") {
+            this.hasBeenScolded = true
+        }
     }
     update(delta) {
         if(!!this.parent.dialogue) {
@@ -401,13 +413,17 @@ export class Player extends Sprite {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
-                        if(!!this.outfit.hat) {
-                            this.outfit.hat.swap(child)
+                        if(child.name == "suit" && this.parent.secretary.timer > 2) {
+                            this.parent.dialogue = new Dialogue(["Hey! Don't touch that! It's the boss's!"], this.parent.secretary.tint, this.parent)
                         } else {
-                            this.parent.removeChild(child)
-                            this.addChild(child)
-                            child.position.x = 0
-                            child.position.y = -this.height
+                            if(!!this.outfit.hat) {
+                                this.outfit.hat.swap(child)
+                            } else {
+                                this.parent.removeChild(child)
+                                this.addChild(child)
+                                child.position.x = 0
+                                child.position.y = -this.height
+                            }
                         }
                     }
                 }
