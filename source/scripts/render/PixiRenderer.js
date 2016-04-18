@@ -8,9 +8,12 @@ export default class PixiRenderer extends React.Component {
         )
     }
     componentDidMount() {
-        this.renderer = Pixi.autoDetectRenderer(this.props.frame.width, this.props.frame.height)
-        this.renderer.backgroundColor = 0x5EC3D4
+        console.log(this.props.display.children[0].texture.baseTexture.source)
+        this.renderer = Pixi.autoDetectRenderer(this.props.display.width, this.props.display.height)
         this.renderer.roundPixels = true
+
+        this.renderer.view.style.width = this.props.display.width + "em"
+        this.renderer.view.style.height = this.props.display.height + "em"
 
         this.refs.canvas.appendChild(this.renderer.view)
         this.renderer.render(this.props.display)

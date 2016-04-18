@@ -1,10 +1,13 @@
 import React from "react"
 import Pixi from "pixi.js"
 
+import PixiRenderer from "./PixiRenderer.js"
+
 export default class Container extends React.Component {
     render() {
+        window.frame = this.props.frame
         return (
-            <div className="faux-pixi-renderer">
+            <div className="container" style={this.style}>
                 {this.elements}
             </div>
         )
@@ -18,12 +21,25 @@ export default class Container extends React.Component {
                         <Sprite display={child} key={child.id}/>
                     )
                 } else if(child instanceof Pixi.Container) {
-                    elements.push(
-                        <Container display={child} key={child.id}/>
-                    )
+                    if(child.keepPixi) {
+                        elements.push(
+                            <PixiRenderer display={child} key={child.id}/>
+                        )
+                    } else {
+                        elements.push(
+                            <Container display={child} key={child.id}/>
+                        )
+                    }
                 }
             })
             return elements
+        }
+    }
+    get style() {
+        return {
+            position: "absolute",
+            left: this.props.display.position.x + "em",
+            top: this.props.display.position.y + "em",
         }
     }
 }
@@ -42,12 +58,12 @@ class Sprite extends React.Component {
     get style() {
         return {
             position: "absolute",
-            left: this.props.display.position.x + "px",
-            top: this.props.display.position.y + "px",
-            width: this.props.display.width + "px",
-            height: this.props.display.height + "px",
-            marginLeft: -1 * this.props.display.anchor.x * this.props.display.width + "px",
-            marginTop: -1 * this.props.display.anchor.y * this.props.display.height + "px",
+            left: this.props.display.position.x + "em",
+            top: this.props.display.position.y + "em",
+            width: this.props.display.width + "em",
+            height: this.props.display.height + "em",
+            marginLeft: -1 * this.props.display.anchor.x * this.props.display.width + "em",
+            marginTop: -1 * this.props.display.anchor.y * this.props.display.height + "em",
             transform: "scaleX(" + this.props.display.direction + ")",
             backgroundImage: "url(" + this.props.display.texture.baseTexture.source.src + ")",
             backgroundColor: this.props.display.color,

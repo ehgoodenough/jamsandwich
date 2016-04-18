@@ -1,3 +1,4 @@
+@import "./styles/utility/AspectRatioFrame.scss";
 @import "./styles/utility/Font.scss";
 @include font(TinyWerewolf2);
 @include font(TinyWerewolf);
@@ -16,6 +17,10 @@ html {
     text-transform: uppercase;
     font-family: TinyWerewolf2;
     background-color: #111;
+}
+
+.frame {
+    @include aspect-ratio(16 * 32, 9 * 32);
 }
 
 @import "./styles/render/TitleScreen.scss";

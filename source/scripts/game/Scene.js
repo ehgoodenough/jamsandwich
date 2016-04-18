@@ -13,10 +13,11 @@ export default class Scene extends Pixi.Container {
 
         var backgrounds = new Pixi.Container()
         backgrounds.id = "backgrounds"
-        this.addChild(backgrounds)
+        // this.addChild(backgrounds)
 
         this.blocks = new Pixi.Container()
         this.blocks.id = "blocks"
+        this.blocks.keepPixi = true
         this.addChild(this.blocks)
         // this.width = scene.map.width
         // this.height = scene.map.height
@@ -39,7 +40,8 @@ export default class Scene extends Pixi.Container {
                 y: background.y * UNIT,
                 w: background.w * UNIT,
                 h: background.h * UNIT,
-                color: background.color
+                color: background.color,
+                behindEverything: true
             }))
         }
 
@@ -282,8 +284,8 @@ export class Entity extends Sprite {
 export class Player extends Sprite {
     constructor(player) {
         super(require("../../images/wolf/wolf.gif"))
-        this.position.x = player.position.x || 0
-        this.position.y = player.position.y || 0
+        this.position.x = 5 * 32 || player.position.x || 0
+        this.position.y = 5 * 32 || player.position.y || 0
 
         this.anchor.x = 0.5
         this.anchor.y = 1
@@ -407,14 +409,20 @@ export class Player extends Sprite {
                                 this.velocity.y = 0
                                 this.jumpheight = 0
                                 this.isFalling = false
-                                this.y1 = child.y0
+                                //this.y1 = child.y0
+                                if(child.isSlab) {
+                                    this.y1 = child.y0
+                                }
                             }
                         } else if(this.velocity.y < 0) {
                             if(child.isSlab) {
                                 return
                             } else {
                                 this.velocity.y = 0
-                                this.y0 = child.y1
+                                //this.y0 = child.y1
+                                if(child.isSlab) {
+                                    this.y0 = child.y1
+                                }
                             }
                         }
                     } if(child.isIntersecting(this, {x: this.velocity.x})) {
@@ -566,8 +574,11 @@ export class Block extends Sprite {
         this.scale.x = (block.w || UNIT) / UNIT
         this.scale.y = (block.h || UNIT) / UNIT
 
+        this.behindEverything = block.behindEverything
+
         if(block.color) {
             this.tint = block.color
+            this.color = block.color
         }
 
         this.anchor.x = 0

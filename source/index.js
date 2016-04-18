@@ -54,13 +54,13 @@ class Mount extends React.Component {
     render() {
         if(!!this.state) {
             return (
-                <AspectRatioFrame frame={this.state.frame}>
+                <div className="frame">
                     {!!this.state.scene ? (
                         <GameScreen scene={this.state.scene} frame={this.state.frame}/>
                     ) : (
                         <TitleScreen title={this.state.title}/>
                     )}
-                </AspectRatioFrame>
+                </div>
             )
         } else {
             return (
