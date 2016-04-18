@@ -4,11 +4,11 @@ import Pixi from "pixi.js"
 export default class PixiRenderer extends React.Component {
     render() {
         return (
-            <div className="canvas" ref="canvas"/>
+            <div className="canvas" ref="canvas" style={this.style}/>
         )
     }
     componentDidMount() {
-        this.renderer = Pixi.autoDetectRenderer(this.props.display.width + 32, this.props.display.height + 32)
+        this.renderer = Pixi.autoDetectRenderer(this.props.display.width + 32, this.props.display.height + 32, {transparent: true})
         this.renderer.roundPixels = true
 
         this.renderer.view.style.width = this.props.display.width + 32 + "em"
@@ -19,5 +19,11 @@ export default class PixiRenderer extends React.Component {
     }
     componentDidUpdate() {
         this.renderer.render(this.props.display)
+    }
+    get style() {
+        return {
+            position: "absolute",
+            zIndex: 10
+        }
     }
 }

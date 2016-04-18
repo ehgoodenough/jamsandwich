@@ -93,7 +93,7 @@ export default {
             scale: 0.5
         },
         {
-            x: 11,
+            x: 11 * 3 * 2 - 6 - 7,
             y: 8,
             character: "boss",
             image: require("../images/npcs/boss.gif"),
@@ -105,8 +105,8 @@ export default {
             scale: 0.3
         },
         {
-            x: 13,
-            y: 8,
+            x: 13 + 42 + 14 - 2,
+            y: 8 + 9,
             character: "dude1",
             image: require("../images/npcs/dude1.gif"),
             dialogue: function() {
@@ -117,8 +117,8 @@ export default {
             scale: 0.6
         },
         {
-            x: 17,
-            y: 8,
+            x: 17 + 42 + 14 - 2,
+            y: 8 + 9,
             character: "dude2",
             image: require("../images/npcs/dude2.gif"),
             dialogue: function() {
@@ -129,8 +129,8 @@ export default {
             scale: 0.5
         },
         {
-            x: 16,
-            y: 8,
+            x: 16 + 42 + 14 - 2,
+            y: 8 + 9,
             character: "partygirl",
             image: require("../images/npcs/partyGirl.gif"),
             dialogue: function() {
@@ -141,7 +141,7 @@ export default {
             scale: 0.5
         },
         {
-            x: 20,
+            x: 20 + 10,
             y: 8,
             character: "phonelady",
             image: require("../images/npcs/Phone_Lady.gif"),
@@ -153,7 +153,7 @@ export default {
             scale: 0.5
         },
         {
-            x: 23,
+            x: 23 + 42 + 14 + 3,
             y: 8,
             character: "scientist",
             image: require("../images/npcs/scientist.gif"),
@@ -165,7 +165,7 @@ export default {
             scale: 0.5
         },
         {
-            x: 24,
+            x: 24 + 42 - 7,
             y: 8,
             character: "secretary",
             image: require("../images/npcs/secretary.gif"),

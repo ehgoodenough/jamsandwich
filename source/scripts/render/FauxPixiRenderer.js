@@ -57,7 +57,7 @@ class Sprite extends React.Component {
     }
     get style() {
         return {
-            position: "absolute",
+            position: this.props.display.fixed ? "fixed" : "absolute",
             left: this.props.display.position.x + "em",
             top: this.props.display.position.y + "em",
             width: this.props.display.width + "em",
@@ -68,6 +68,7 @@ class Sprite extends React.Component {
             backgroundImage: "url(" + this.props.display.texture.baseTexture.source.src + ")",
             backgroundColor: this.props.display.color,
             backgroundSize: "contain",
+            zIndex: this.props.display.stack || 10
         }
     }
     get children() {

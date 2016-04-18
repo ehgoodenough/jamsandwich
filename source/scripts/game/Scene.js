@@ -15,6 +15,9 @@ export default class Scene extends Pixi.Container {
         backgrounds.id = "backgrounds"
         // this.addChild(backgrounds)
 
+        this.moon = new Moon()
+        this.addChild(this.moon)
+
         this.blocks = new Pixi.Container()
         this.blocks.id = "blocks"
         this.blocks.keepPixi = true
@@ -33,18 +36,6 @@ export default class Scene extends Pixi.Container {
             }))
         }
 
-        for(var key in scene.backgrounds) {
-            var background = scene.backgrounds[key]
-            backgrounds.addChild(new Block({
-                x: background.x * UNIT,
-                y: background.y * UNIT,
-                w: background.w * UNIT,
-                h: background.h * UNIT,
-                color: background.color,
-                behindEverything: true
-            }))
-        }
-
         for(var key in scene.entities) {
             var entity = scene.entities[key]
             this.addChild(new Entity(entity))
@@ -58,12 +49,7 @@ export default class Scene extends Pixi.Container {
             this.objs.addChild(new Obj(obj))
         }
 
-        this.addChild(new Player({
-            position: {
-                x: 7 * 32,
-                y: 10 * 32
-            }
-        }))
+        this.addChild(new Player())
 
         for(var key in scene.items) {
             var item = scene.items[key]
@@ -272,8 +258,8 @@ export class Entity extends Sprite {
 export class Player extends Sprite {
     constructor(player) {
         super(require("../../images/wolf/wolf.gif"))
-        this.position.x = 5 * 32 || player.position.x || 0
-        this.position.y = 5 * 32 || player.position.y || 0
+        this.position.x = 3 * 32 || player.position.x || 0
+        this.position.y = 8 * 32 || player.position.y || 0
 
         this.anchor.x = 0.5
         this.anchor.y = 1
@@ -291,7 +277,7 @@ export class Player extends Sprite {
 
         this.jumpforce = -10
         this.acceleration = 2
-        this.direction = -1
+        this.direction = +1
 
         this.jumpheight = 0
 
@@ -615,6 +601,26 @@ export class Dialogue {
     get text() {
         if(this.texts.length > 0) {
             return this.texts[0].substring(0, this.pointer)
+        }
+    }
+}
+
+export class Moon extends Sprite {
+    constructor() {
+        super(require("../../images/moon.gif"))
+
+        this.scale.x = 0.2
+        this.scale.y = 0.2
+
+        this.position.x = UNIT * 9
+        this.position.y = UNIT * 6
+
+        this.stack = 1
+        this.fixed = true
+    }
+    update(delta) {
+        if(this.position.y > UNIT * 4) {
+            this.position.y -= 0.1
         }
     }
 }
