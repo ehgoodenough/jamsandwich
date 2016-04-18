@@ -3,19 +3,32 @@ import Pixi from "pixi.js"
 export default {
     map: map(require("raw!./map.txt")),
     tileset: {
-        "o": Pixi.Texture.fromImage(require("../images/cafe/floor_03.png")),
-        "X": Pixi.Texture.fromImage(require("../images/cafe/walltile_03.png")),
-        "-": Pixi.Texture.fromImage(require("../images/cafe/floor_03.png")),
-        "&": Pixi.Texture.fromImage(require("../images/world/BRICK_0001.png"))
+        "-": {
+            texture: Pixi.Texture.fromImage(require("../images/cafe/floor_03.png"))
+        },
+        "&": {
+            texture: Pixi.Texture.fromImage(require("../images/world/BRICK_0001.png"))
+        },
+        "X": {
+            texture: Pixi.Texture.fromImage(require("../images/office/floor_02.png"))
+        },
+        "A": {
+            texture: Pixi.Texture.fromImage(require("../images/office/wallceiling_02.png")),
+            isPassable: true
+        },
+        "V": {
+            texture: Pixi.Texture.fromImage(require("../images/office/wallfloor_02.png")),
+            isPassable: true
+        },
     },
     backgrounds: [
-        // {
-        //     x: 0,
-        //     y: 17,
-        //     w: 43,
-        //     h: 12,
-        //     color: 0x663300,
-        // },
+        {
+            x: 1,
+            y: 1,
+            w: 34,
+            h: 9,
+            color: 0x7B9BA6,
+        },
         // {
         //     x: 24,
         //     y: 2,
@@ -23,6 +36,13 @@ export default {
         //     h: 18,
         //     color: 0x444444,
         // }
+    ],
+    objects: [
+        {
+            x: 10,
+            y: 8,
+            texture: Pixi.Texture.fromImage(require("../images/office/wastebin.png")),
+        }
     ],
     entities: [
         // {

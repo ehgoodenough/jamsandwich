@@ -8,7 +8,6 @@ export default class GameScreen extends React.Component {
             <div className="game screen">
                 <PixiRenderer display={this.props.scene} frame={this.props.frame}/>
                 <DialogueBox dialogue={this.props.scene.dialogue}/>
-                <AchievementList achievements={this.props.scene.player.achievements}/>
                 <div className="message" key={this.props.scene.message}>{this.props.scene.message}</div>
             </div>
         )

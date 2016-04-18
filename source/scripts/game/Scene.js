@@ -19,7 +19,8 @@ export default class Scene extends Pixi.Container {
         for(var key in scene.map.blocks) {
             var tile = scene.map.blocks[key]
             this.blocks.addChild(new Block({
-                texture: scene.tileset[tile.symbol],
+                texture: scene.tileset[tile.symbol].texture,
+                isPassable: scene.tileset[tile.symbol].isPassable,
                 isSlab: tile.symbol == "-",
                 x: tile.x * UNIT,
                 y: tile.y * UNIT,
@@ -47,6 +48,13 @@ export default class Scene extends Pixi.Container {
                 character: entity.character,
                 dialogue: entity.dialogue
             }))
+        }
+
+        this.objs = new Pixi.Container()
+        this.addChild(this.objs)
+        for(var key in scene.objects) {
+            var obj = scene.objects[key]
+            this.objs.addChild(new Obj(obj))
         }
 
         this.addChild(new Player({
@@ -175,6 +183,21 @@ export class Sprite extends Pixi.Sprite {
 const FRICTION = 0.7
 const AIR_FRICTION = 0.9
 const GRAVITY = 0.55
+
+export class Obj extends Sprite {
+    constructor(object) {
+        super(object.texture)
+
+        this.position.x = object.x * UNIT
+        this.position.y = object.y * UNIT
+
+        this.scale.x = 0.25
+        this.scale.y = 0.25
+
+        this.anchor.x = 0.5
+        this.anchor.y = 1
+    }
+}
 
 export class Entity extends Sprite {
     constructor(entity) {
@@ -503,6 +526,10 @@ export class Block extends Sprite {
 
         this.scale.x = (block.w || UNIT) / UNIT
         this.scale.y = (block.h || UNIT) / UNIT
+
+        if(block.color) {
+            this.tint = block.color
+        }
 
         this.anchor.x = 0
         this.anchor.y = 0
