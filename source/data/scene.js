@@ -194,20 +194,20 @@ export default {
             x: 5,
             y: 5,
             image: require("../images/items/bowtie.png"),
-            name: "suit",
+            name: "bowtie",
             pin: {
                 x: 40,
-                y: 30,
+                y: 90,
             }
         },
         {
             x: 7,
-            y: 5,
+            y: 10,
             image: require("../images/items/Propellor.png"),
-            name: "suit",
+            name: "propellor",
             pin: {
                 x: 40,
-                y: 10,
+                y: 142,
             }
         },
     ]

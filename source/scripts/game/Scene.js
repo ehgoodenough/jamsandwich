@@ -459,13 +459,13 @@ export class Player extends Sprite {
                         // } else {
                             if(!!this.outfit.hat) {
                                 this.outfit.hat.swap(child)
-                                child.position.x = child.pin.x
-                                child.position.y = child.pin.y
+                                child.position.x = child.pinning.x
+                                child.position.y = child.pinning.y
                             } else {
                                 this.parent.removeChild(child)
                                 this.addChild(child)
-                                child.position.x = child.pin.x
-                                child.position.y = child.pin.y
+                                child.position.x = child.pinning.x
+                                child.position.y = child.pinning.y
                             }
                         // }
                     }
@@ -545,10 +545,13 @@ export class Item extends Sprite {
         this.position.x = item.x * UNIT || 0
         this.position.y = item.y * UNIT || 0
 
-        this.pin = item.pin
+        this.pinning = item.pin
 
         this.anchor.x = 0.5
-        this.anchor.y = 1
+        this.anchor.y = 13
+
+        this.scale.x = 0.5
+        this.scale.y = 0.5
 
         this.name = item.name
     }
