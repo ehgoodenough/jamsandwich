@@ -74,64 +74,12 @@ export default {
     },
     objects: [
         {
-            x: 10,
+            x: 42,
             y: 8,
             image: require("../images/office/wastebin.png")
         }
     ],
     entities: [
-        // {
-        //     x: 31,
-        //     y: 17,
-        //     color: 0xF4A460,
-        //     character: "boss",
-        //     dialogue: function(player) {
-        //         if(player.achievements.promotion) {
-        //             return [
-        //                 "Congrats on the promotion! You'll make us proud."
-        //             ]
-        //         } else if(player.outfit.hat && player.outfit.hat.name == "suit") {
-        //             return [
-        //                 "Oh, what a nice suit!",
-        //                 "You deserve a promotion!",
-        //                 () => {
-        //                     player.achievements.promotion = true
-        //                     player.parent.message = "CORPORATE LADDER"
-        //                 }
-        //             ]
-        //         } else {
-        //             return [
-        //                 "Remember, son, dress for the job you want.",
-        //                 "Right now, you look " + player.description + "!",
-        //             ]
-        //         }
-        //     }
-        // },
-        // {
-        //     x: 38,
-        //     y: 8,
-        //     color: 0xFF69B4,
-        //     character: "secretary",
-        //     dialogue: function(player) {
-        //         if(player.outfit.hat && player.outfit.hat.name == "suit") {
-        //             return [
-        //                 "Hey, Wolfgang! Nice suit!"
-        //             ]
-        //         } else {
-        //             return [
-        //             "Oh, Wolfgang!",
-        //             "Did you hear?",
-        //             "Uh huh! It was Malinda!",
-        //             "And then she...",
-        //             "Yup. That's right.",
-        //             "...",
-        //             "No that's not what I heard at all!",
-        //             "Because Sarah says...",
-        //             "Oh, my phone is blowing up. One sec.",
-        //             ]
-        //         }
-        //     }
-        // },
         {
             x: 9,
             y: 8,
@@ -141,7 +89,104 @@ export default {
                 return [
                     "Hello, Wolfgang!"
                 ]
-            }
+            },
+            scale: 0.5
+        },
+        {
+            x: 11,
+            y: 8,
+            character: "boss",
+            image: require("../images/npcs/boss.gif"),
+            dialogue: function() {
+                return [
+                    "You're late, Wolfgang!"
+                ]
+            },
+            scale: 0.3
+        },
+        {
+            x: 13,
+            y: 8,
+            character: "dude1",
+            image: require("../images/npcs/dude1.gif"),
+            dialogue: function() {
+                return [
+                    "sup, Wolfgang!"
+                ]
+            },
+            scale: 0.6
+        },
+        {
+            x: 17,
+            y: 8,
+            character: "dude2",
+            image: require("../images/npcs/dude2.gif"),
+            dialogue: function() {
+                return [
+                    "Sup, Wolfgang!"
+                ]
+            },
+            scale: 0.5
+        },
+        {
+            x: 16,
+            y: 8,
+            character: "partygirl",
+            image: require("../images/npcs/partyGirl.gif"),
+            dialogue: function() {
+                return [
+                    "Hoo haa!"
+                ]
+            },
+            scale: 0.5
+        },
+        {
+            x: 20,
+            y: 8,
+            character: "phonelady",
+            image: require("../images/npcs/Phone_Lady.gif"),
+            dialogue: function() {
+                return [
+                    "Hoo haa!"
+                ]
+            },
+            scale: 0.5
+        },
+        {
+            x: 23,
+            y: 8,
+            character: "scientist",
+            image: require("../images/npcs/scientist.gif"),
+            dialogue: function() {
+                return [
+                    "exactly"
+                ]
+            },
+            scale: 0.5
+        },
+        {
+            x: 24,
+            y: 8,
+            character: "secretary",
+            image: require("../images/npcs/secretary.gif"),
+            dialogue: function() {
+                return [
+                    "exactly"
+                ]
+            },
+            scale: 0.5
+        },
+        {
+            x: 30,
+            y: 8,
+            character: "waiter",
+            image: require("../images/npcs/waiter_sleepy200x.gif"),
+            dialogue: function() {
+                return [
+                    "nope"
+                ]
+            },
+            scale: 0.5
         },
     ],
     items: [

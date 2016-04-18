@@ -47,13 +47,7 @@ export default class Scene extends Pixi.Container {
 
         for(var key in scene.entities) {
             var entity = scene.entities[key]
-            this.addChild(new Entity({
-                x: entity.x * UNIT,
-                y: entity.y * UNIT,
-                image: entity.image,
-                character: entity.character,
-                dialogue: entity.dialogue
-            }))
+            this.addChild(new Entity(entity))
         }
 
         this.objs = new Pixi.Container()
@@ -218,19 +212,17 @@ export class Entity extends Sprite {
     constructor(entity) {
         super(entity.image)
 
-        this.position.x = entity.x
-        this.position.y = entity.y
+        this.position.x = entity.x * UNIT
+        this.position.y = entity.y * UNIT
 
         this.anchor.x = 0.5
         this.anchor.y = 1
 
-        this.scale.x = 0.5
-        this.scale.y = 0.5
+        this.scale.x = entity.scale
+        this.scale.y = entity.scale
 
         this.character = entity.character
         if(this.character == "boss") {
-            this.scale.x = 1.5
-            this.scale.y = 1.5
             this.floor = this.position.y
             this.vy = 0
         } if(this.character == "partyboy") {

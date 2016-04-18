@@ -6,6 +6,7 @@ import Scene from "./scripts/game/Scene.js"
 
 import scene from "./data/scene.js"
 
+
 var state = {
     frame: {
         width: 16 * 32,
@@ -14,18 +15,8 @@ var state = {
     title: {
         cursor: 0,
         update: function() {
-            if(Keyboard.isDown("W")
-            || Keyboard.isDown("<up>")) {
-                this.cursor = 0
-            }
-            if(Keyboard.isDown("S")
-            || Keyboard.isDown("<down>")) {
-                this.cursor = 1
-            }
             if(Keyboard.isJustDown("<space>")) {
-                if(this.cursor == 1) {
-                    this.startGame()
-                }
+                this.startGame()
             }
         },
         startGame: function() {

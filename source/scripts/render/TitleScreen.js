@@ -7,8 +7,7 @@ export default class TitleScreen extends React.Component {
         return (
             <div className="title screen">
                 <img src={Logo}/>
-                <div className={this.props.title.cursor == 0 ? "selected" : null}>Play</div>
-                <div className={this.props.title.cursor == 1 ? "selected" : null}>Credits</div>
+                <div style={{fontSize: "20em"}}>Hit spacebar to start!</div>
             </div>
         )
     }

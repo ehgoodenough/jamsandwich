@@ -29,11 +29,11 @@ class DialogueBox extends React.Component {
     get style() {
         if(!!this.props.dialogue) {
             return {
-                top: "16px"
+                top: "16em"
             }
         } else {
             return {
-                top: "-100px"
+                top: "-100em"
             }
         }
     }
