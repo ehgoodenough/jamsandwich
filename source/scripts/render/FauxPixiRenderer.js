@@ -71,6 +71,26 @@ class Sprite extends React.Component {
         }
     }
     get children() {
-        return null
+        if(!!this.props.display) {
+            var elements = new Array()
+            this.props.display.children.forEach((child) => {
+                if(child instanceof Pixi.Sprite) {
+                    elements.push(
+                        <Sprite display={child} key={child.id}/>
+                    )
+                } else if(child instanceof Pixi.Container) {
+                    if(child.keepPixi) {
+                        elements.push(
+                            <PixiRenderer display={child} key={child.id}/>
+                        )
+                    } else {
+                        elements.push(
+                            <Container display={child} key={child.id}/>
+                        )
+                    }
+                }
+            })
+            return elements
+        }
     }
 }

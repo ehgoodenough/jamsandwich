@@ -67,14 +67,7 @@ export default class Scene extends Pixi.Container {
 
         for(var key in scene.items) {
             var item = scene.items[key]
-            this.addChild(new Item({
-                position: {
-                    x: item.x * UNIT,
-                    y: item.y * UNIT,
-                },
-                color: item.color,
-                name: item.name
-            }))
+            this.addChild(new Item(item))
         }
 
         this.snapCamera()
@@ -466,11 +459,13 @@ export class Player extends Sprite {
                         // } else {
                             if(!!this.outfit.hat) {
                                 this.outfit.hat.swap(child)
+                                child.position.x = child.pin.x
+                                child.position.y = child.pin.y
                             } else {
                                 this.parent.removeChild(child)
                                 this.addChild(child)
-                                child.position.x = 0
-                                child.position.y = -this.height
+                                child.position.x = child.pin.x
+                                child.position.y = child.pin.y
                             }
                         // }
                     }
@@ -545,12 +540,12 @@ export class Player extends Sprite {
 
 export class Item extends Sprite {
     constructor(item = new Object()) {
-        super(require("../../images/medium.png"))
+        super(item.image)
 
-        this.position.x = item.position.x || 0
-        this.position.y = item.position.y || 0
+        this.position.x = item.x * UNIT || 0
+        this.position.y = item.y * UNIT || 0
 
-        this.tint = item.color || 0x000000
+        this.pin = item.pin
 
         this.anchor.x = 0.5
         this.anchor.y = 1

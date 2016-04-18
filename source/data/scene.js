@@ -190,24 +190,26 @@ export default {
         },
     ],
     items: [
-        // {
-        //     x: 29,
-        //     y: 8,
-        //     color: 0xCC0000,
-        //     name: "suit",
-        // },
-        // {
-        //     x: 23,
-        //     y: 8,
-        //     color: 0x551A8B,
-        //     name: "sunglasses"
-        // },
-        // {
-        //     x: 14,
-        //     y: 11,
-        //     color: 0x0000CC,
-        //     name: "pants"
-        // }
+        {
+            x: 5,
+            y: 5,
+            image: require("../images/items/bowtie.png"),
+            name: "suit",
+            pin: {
+                x: 40,
+                y: 30,
+            }
+        },
+        {
+            x: 7,
+            y: 5,
+            image: require("../images/items/Propellor.png"),
+            name: "suit",
+            pin: {
+                x: 40,
+                y: 10,
+            }
+        },
     ]
 }
 
