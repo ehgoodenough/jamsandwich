@@ -1,18 +1,18 @@
 const BREATHE = 1000
-const VOLUME = 0.75
+const VOLUME = 0.5
 
 export default class Jukebox {
     constructor(musics) {
         if(musics instanceof Array == false) {
             musics = new Array(musics)
         }
-        
+
         this.musics = musics
         this.musics.forEach((music) => {
             if(music instanceof Audio == false) {
                 throw new Error("Jukebox only accepts Audio")
             }
-            
+
             music.volume = VOLUME
             music.onended = () => {
                 window.setTimeout(() => {
@@ -31,15 +31,3 @@ export default class Jukebox {
         return this
     }
 }
-
-// import Jukebox from "./scripts/utility/Jukebox.js"
-// 
-// window.jukebox = new Jukebox([
-//     new Audio(require("./music/debris.mp3")),
-//     new Audio(require("./music/spacetime.mp3")),
-//     new Audio(require("./music/trouble.mp3")),
-// ])
-// 
-// if(STAGE != "DEVELOPMENT") {
-//     jukebox.play()
-// }

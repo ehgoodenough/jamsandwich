@@ -11,10 +11,6 @@ export default class Scene extends Pixi.Container {
 
         this.frame = frame
 
-        var backgrounds = new Pixi.Container()
-        backgrounds.id = "backgrounds"
-        // this.addChild(backgrounds)
-
         this.moon = new Moon()
         this.addChild(this.moon)
 
@@ -36,11 +32,6 @@ export default class Scene extends Pixi.Container {
             }))
         }
 
-        for(var key in scene.entities) {
-            var entity = scene.entities[key]
-            this.addChild(new Entity(entity))
-        }
-
         this.objs = new Pixi.Container()
         this.objs.id = "objects"
         this.addChild(this.objs)
@@ -48,6 +39,12 @@ export default class Scene extends Pixi.Container {
             var obj = scene.objects[key]
             this.objs.addChild(new Obj(obj))
         }
+
+        for(var key in scene.entities) {
+            var entity = scene.entities[key]
+            this.addChild(new Entity(entity))
+        }
+
 
         this.addChild(new Player())
 

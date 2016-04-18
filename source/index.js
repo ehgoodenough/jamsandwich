@@ -80,3 +80,20 @@ var loop = new Loop(function(delta) {
 
     render.setState(state)
 })
+
+import Jukebox from "./scripts/utility/Jukebox.js"
+
+if(STAGE != "DEVELOPMENT") {
+
+    window.jukebox = new Jukebox([
+        new Audio(require("./music/wwolf5.mp3")),
+        new Audio(require("./music/wwolf4.mp3")),
+        new Audio(require("./music/wwolf6.mp3")),
+        new Audio(require("./music/wwolf7.mp3")),
+        new Audio(require("./music/wwolf1.mp3")),
+        new Audio(require("./music/wwolf2.mp3")),
+        new Audio(require("./music/wwolf3.mp3")),
+    ])
+    
+    jukebox.play()
+}
