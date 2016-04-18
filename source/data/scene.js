@@ -20,6 +20,57 @@ export default {
             image: require("../images/office/wallfloor_02.png"),
             isPassable: true
         },
+        ".": {
+            image: require("../images/office/wall_02.png"),
+            isPassable: true
+        },
+        "x": {
+            image: require("../images/bedroom/purplefloor_01.png"),
+        },
+        ">": {
+            image: require("../images/bedroom/cyanwall_ceiling_03.png"),
+            isPassable: true,
+        },
+        "<": {
+            image: require("../images/bedroom/cyanwall_floor_02.png"),
+            isPassable: true,
+        },
+        "~": {
+            image: require("../images/bedroom/cyanwall_01.png"),
+            isPassable: true,
+        },
+
+        "B": {
+            image: require("../images/cafe/floor_03.png"),
+        },
+        "1": {
+            image: require("../images/cafe/molding_ceiling_left_corner.png"),
+            isPassable: true,
+        },
+        "2": {
+            image: require("../images/cafe/wallceiling_03.png"),
+            isPassable: true,
+        },
+        "3": {
+            image: require("../images/cafe/molding_ceiling_right_corner.png"),
+            isPassable: true,
+        },
+        "4": {
+            image: require("../images/cafe/right_molding_03.png"),
+            isPassable: true,
+        },
+        "8": {
+            image: require("../images/cafe/left_molding_03.png"),
+            isPassable: true,
+        },
+        "6": {
+            image: require("../images/cafe/wallfloor_03.png"),
+            isPassable: true,
+        },
+        "0": {
+            image: require("../images/cafe/walltile_03.png"),
+            isPassable: true,
+        }
     },
     backgrounds: [
         {

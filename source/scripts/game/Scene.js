@@ -88,8 +88,8 @@ export default class Scene extends Pixi.Container {
     snapCamera() {
         var x = (this.player.position.x - (this.frame.width / 2))
         var y = Math.floor(this.player.position.y / this.frame.height) * this.frame.height
-        y = Math.min(y, this.height - this.frame.height)
-        x = Math.min(x, this.width - this.frame.width)
+        y = Math.min(y, this.height - this.frame.height + 1)
+        x = Math.min(x, this.width - this.frame.width + 1)
         x = Math.max(x, 0)
         x *= -1
         y *= -1
