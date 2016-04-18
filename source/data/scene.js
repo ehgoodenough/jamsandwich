@@ -23,19 +23,26 @@ export default {
     },
     backgrounds: [
         {
-            x: 1,
-            y: 1,
-            w: 34,
+            x: 0,
+            y: 0,
+            w: 35,
             h: 9,
             color: 0x7B9BA6,
         },
-        // {
-        //     x: 24,
-        //     y: 2,
-        //     w: 19,
-        //     h: 18,
-        //     color: 0x444444,
-        // }
+        {
+            x: 0,
+            y: 9*1,
+            w: 35,
+            h: 9,
+            color: 0x444444,
+        },
+        {
+            x: 0,
+            y: 9*2,
+            w: 35,
+            h: 9,
+            color: 0xCC0000,
+        }
     ],
     objects: [
         {

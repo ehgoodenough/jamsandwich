@@ -1,6 +1,6 @@
 @import "./styles/utility/Font.scss";
-@include font(comfortaa);
-@include font(tiny);
+@include font(TinyWerewolf2);
+@include font(TinyWerewolf);
 
 * {
     margin: 0;
@@ -13,7 +13,8 @@
 
 html {
     color: #EEE;
-    font-family: comfortaa;
+    text-transform: uppercase;
+    font-family: TinyWerewolf2;
     background-color: #111;
 }
 
