@@ -6,25 +6,27 @@ const UNIT = 32
 export default class Scene extends Pixi.Container {
     constructor(scene, frame) {
         super()
-        
+
         this.frame = frame
-        
+
         var backgrounds = new Pixi.Container()
         this.addChild(backgrounds)
-        
-        this.width = scene.world.width
-        this.height = scene.world.height
-        for(var key in scene.world.tiles) {
-            var tile = scene.world.tiles[key]
-            this.addChild(new Block({
+
+        this.blocks = new Pixi.Container()
+        this.addChild(this.blocks)
+        // this.width = scene.map.width
+        // this.height = scene.map.height
+        for(var key in scene.map.blocks) {
+            var tile = scene.map.blocks[key]
+            this.blocks.addChild(new Block({
+                texture: scene.tileset[tile.symbol].texture,
+                isSlab: tile.symbol == "-",
                 x: tile.x * UNIT,
                 y: tile.y * UNIT,
                 w: UNIT, h: UNIT,
-                color: scene.tileset[tile.symbol],
-                isSlab: tile.symbol == "-",
             }))
         }
-        
+
         for(var key in scene.backgrounds) {
             var background = scene.backgrounds[key]
             backgrounds.addChild(new Block({
@@ -35,7 +37,7 @@ export default class Scene extends Pixi.Container {
                 color: background.color
             }))
         }
-        
+
         for(var key in scene.entities) {
             var entity = scene.entities[key]
             this.addChild(new Entity({
@@ -46,14 +48,14 @@ export default class Scene extends Pixi.Container {
                 dialogue: entity.dialogue
             }))
         }
-        
+
         this.addChild(new Player({
             position: {
                 x: 7 * 32,
                 y: 10 * 32
             }
         }))
-        
+
         for(var key in scene.items) {
             var item = scene.items[key]
             this.addChild(new Item({
@@ -65,12 +67,12 @@ export default class Scene extends Pixi.Container {
                 name: item.name
             }))
         }
-        
+
         this.snapCamera()
     }
     snapCamera() {
         var x = (this.player.position.x - (this.frame.width / 2))
-        var y = (this.player.position.y - (this.frame.height * 0.66))
+        var y = (this.player.position.y - (this.frame.height * (10/11)))
         y = Math.min(y, this.height - this.frame.height)
         x = Math.min(x, this.width - this.frame.width)
         x = Math.max(x, 0)
@@ -81,7 +83,7 @@ export default class Scene extends Pixi.Container {
     }
     panCamera() {
         var x = (this.player.position.x - (this.frame.width / 2))
-        var y = (this.player.position.y - (this.frame.height * 0.66))
+        var y = (this.player.position.y - (this.frame.height * (10/11)))
         y = Math.min(y, this.height - this.frame.height)
         x = Math.min(x, this.width - this.frame.width)
         x = Math.max(x, 0)
@@ -104,11 +106,11 @@ export default class Scene extends Pixi.Container {
                 child.update(delta)
             }
         })
-        
+
         if(!!this.dialogue) {
             this.dialogue.update(delta)
         }
-        
+
         this.panCamera()
     }
     addChild(object) {
@@ -116,7 +118,7 @@ export default class Scene extends Pixi.Container {
         if(object instanceof Player) {
             this.player = object
         }
-        
+
         if(object instanceof Entity) {
             this[object.character] = object
         }
@@ -125,13 +127,13 @@ export default class Scene extends Pixi.Container {
 
 export class Sprite extends Pixi.Sprite {
     get x0() {
-        return this.position.x - (this.width * this.anchor.x) 
+        return this.position.x - (this.width * this.anchor.x)
     }
     get x1() {
         return this.position.x + (this.width * (1 - this.anchor.x))
     }
     get y0() {
-        return this.position.y - (this.height * this.anchor.y) 
+        return this.position.y - (this.height * this.anchor.y)
     }
     get y1() {
         return this.position.y + (this.height * (1 - this.anchor.y))
@@ -150,7 +152,7 @@ export class Sprite extends Pixi.Sprite {
     }
     isIntersecting(that, delta = new Object()) {
         return this.x0 < that.x1 + (delta.x || 0)
-            && this.x1 > that.x0 + (delta.x || 0) 
+            && this.x1 > that.x0 + (delta.x || 0)
             && this.y0 < that.y1 + (delta.y || 0)
             && this.y1 > that.y0 + (delta.y || 0)
     }
@@ -161,7 +163,7 @@ export class Sprite extends Pixi.Sprite {
         this.position.y = that.position.y
         that.position.x = x
         that.position.y = y
-        
+
         var parent = this.parent
         this.parent.removeChild(this)
         that.parent.addChild(this)
@@ -177,15 +179,13 @@ const GRAVITY = 0.55
 export class Entity extends Sprite {
     constructor(entity) {
         super(Pixi.Texture.fromImage(require("../../images/player.png")))
-        
+
         this.position.x = entity.x
         this.position.y = entity.y
-        
-        this.tint = entity.color || 0xFFFFFF
-        
+
         this.anchor.x = 0.5
         this.anchor.y = 1
-        
+
         this.character = entity.character
         if(this.character == "boss") {
             this.scale.x = 1.5
@@ -197,7 +197,7 @@ export class Entity extends Sprite {
             this.position.y -= Math.random() * 20
             this.vy = 0
         }
-        
+
         this.dialogue = entity.dialogue
     }
     update(delta) {
@@ -205,39 +205,39 @@ export class Entity extends Sprite {
             if(this.position.y == this.floor) {
                 this.vy = -10
             }
-            
+
             this.vy += GRAVITY
-            
+
             if(this.position.y + this.vy >= this.floor) {
                 this.position.y = this.floor
                 this.vy = 0
             }
-            
+
             this.position.y += this.vy
         } else if(this.character == "boss") {
             if(this.isAngry == true) {
                 if(this.position.y == this.floor) {
                     this.vy = -5
                 }
-                
+
                 this.vy += GRAVITY
-                
+
                 if(this.position.y + this.vy >= this.floor) {
                     this.position.y = this.floor
                     this.vy = 0
                 }
-                
+
                 this.position.y += this.vy
             } else {
                 this.position.y = this.floor
             }
         } else if(this.character == "secretary") {
             this.timer = this.timer || 0
-            
+
             this.timer += delta
-            
+
             this.rotation = this.timer < 2 ? 45 : 0
-            
+
             this.timer %= 5
         }
     }
@@ -246,28 +246,28 @@ export class Entity extends Sprite {
 export class Player extends Sprite {
     constructor(player) {
         super(Pixi.Texture.fromImage(require("../../images/player.png")))
-        
+
         this.position.x = player.position.x || 0
         this.position.y = player.position.y || 0
-        
+
         this.anchor.x = 0.5
         this.anchor.y = 1
-        
+
         this.velocity = new Pixi.Point()
         this.maxvelocity = new Pixi.Point()
-        
+
         this.maxvelocity.x = 5
         this.maxvelocity.y = 50
-        
+
         this.outfit = new Object()
-        
+
         this.jumpforce = -10
         this.acceleration = 2
-        
+
         this.jumpheight = 0
-        
+
         this.achievements = {}
-        
+
         // if(STAGE == "DEVELOPMENT") {
         //     this.hasBeenScolded = true
         // }
@@ -296,7 +296,7 @@ export class Player extends Sprite {
                     this.velocity.x = +this.maxvelocity.x
                 }
             }
-            
+
             // poll input for jumping.
             if(Keyboard.isJustDown("W")
             || Keyboard.isJustDown("<up>")) {
@@ -319,21 +319,21 @@ export class Player extends Sprite {
                     }
                 }
             }
-            
+
             if(Keyboard.isDown("S")
             || Keyboard.isDown("<down>")) {
                 this.isFalling = true
             }
         }
-        
+
         // applying acceleration by gravity.
         this.velocity.y += GRAVITY
-        
+
         // enforcing vertical maximum velocity.
         // if(this.velocity.y > +this.maxvelocity.y) {
         //     this.velocity.y = +this.maxvelocity.y
         // }
-        
+
         // collision with the edges of the world.
         if(this.position.y + this.velocity.y > this.parent.height) {
             this.velocity.y = 0
@@ -348,9 +348,9 @@ export class Player extends Sprite {
             this.velocity.x = 0
             this.x1 = this.parent.width
         }
-        
-        // collision with the tiles of the world.
-        this.parent.children.forEach((child) => {
+
+        // collision with the blocks of the world.
+        this.parent.blocks.children.forEach((child) => {
             if(child instanceof Block) {
                 if(!child.isPassable) {
                     if(child.isIntersecting(this, {y: this.velocity.y})) {
@@ -385,10 +385,10 @@ export class Player extends Sprite {
                 }
             }
         })
-        
+
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
-        
+
         // if(this.velocity.y == 0) {
         //     this.scale.x += (1 - this.scale.x) * 0.25
         //     this.scale.y += (1 - this.scale.y) * 0.25
@@ -399,22 +399,22 @@ export class Player extends Sprite {
         //     this.scale.x += (1.2 - this.scale.x) * 0.25
         //     this.scale.y += (0.8 - this.scale.y) * 0.25
         // }
-        
+
         this.jumpheight += this.velocity.y
-        
+
         if(this.jumpheight == 0) {
             this.velocity.x *= FRICTION
         } else {
             this.velocity.x *= AIR_FRICTION
         }
-        
+
         this.parent.children.forEach((child) => {
             if(child instanceof Item) {
                 if(this.isIntersecting(child)) {
                     if(Keyboard.isJustDown("<space>")) {
-                        if(child.name == "suit" && this.parent.secretary.timer > 2 && !this.hasWornSuit) {
-                            this.parent.dialogue = new Dialogue(["Hey! Don't touch that! It's the boss's!"], this.parent.secretary.tint, this.parent)
-                        } else {
+                        // if(child.name == "suit" && this.parent.secretary.timer > 2 && !this.hasWornSuit) {
+                        //     this.parent.dialogue = new Dialogue(["Hey! Don't touch that! It's the boss's!"], this.parent.secretary.tint, this.parent)
+                        // } else {
                             if(!!this.outfit.hat) {
                                 this.outfit.hat.swap(child)
                             } else {
@@ -423,7 +423,7 @@ export class Player extends Sprite {
                                 child.position.x = 0
                                 child.position.y = -this.height
                             }
-                        }
+                        // }
                     }
                 }
             } else if(child instanceof Entity) {
@@ -436,32 +436,32 @@ export class Player extends Sprite {
                 }
             }
         })
-        
-        if(!this.hasBeenScolded) {
-            if(this.position.x > 26 * UNIT) {
-                this.hasBeenScolded = true
-                this.parent.boss.isAngry = true
-                this.parent.dialogue = new Dialogue([
-                    "Hey!!",
-                    "You're late again!",
-                    "And what are you wearing?",
-                    () => {
-                        this.parent.boss.isAngry = false
-                    },
-                    "That isn't business professional attire at all!",
-                    "Remember, son, dress for the job you want.",
-                    "Right now, you look " + this.description + "!! :(",
-                ], 0xF4A460, this.parent)
-                
-            }
-        }
+
+        // if(!this.hasBeenScolded) {
+        //     if(this.position.x > 26 * UNIT) {
+        //         this.hasBeenScolded = true
+        //         // this.parent.boss.isAngry = true
+        //         this.parent.dialogue = new Dialogue([
+        //             "Hey!!",
+        //             "You're late again!",
+        //             "And what are you wearing?",
+        //             () => {
+        //                 // this.parent.boss.isAngry = false
+        //             },
+        //             "That isn't business professional attire at all!",
+        //             "Remember, son, dress for the job you want.",
+        //             "Right now, you look " + this.description + "!! :(",
+        //         ], 0xF4A460, this.parent)
+        //
+        //     }
+        // }
     }
     addChild(object) {
         super.addChild(object)
-        
+
         if(object instanceof Item) {
             this.outfit.hat = object
-            
+
             if(this.outfit.hat.name == "suit") {
                 this.hasWornSuit = true
             }
@@ -481,37 +481,35 @@ export class Player extends Sprite {
 export class Item extends Sprite {
     constructor(item = new Object()) {
         super(Pixi.Texture.fromImage(require("../../images/medium.png")))
-        
+
         this.position.x = item.position.x || 0
         this.position.y = item.position.y || 0
-        
+
         this.tint = item.color || 0x000000
-        
+
         this.anchor.x = 0.5
         this.anchor.y = 1
-        
+
         this.name = item.name
     }
 }
 
 export class Block extends Sprite {
     constructor(block = new Object()) {
-        super(Pixi.Texture.fromImage(require("../../images/large.png")))
-        
+        super(block.texture || Pixi.Texture.fromImage(require("../../images/large.png")))
+
         this.position.x = block.x || 0
         this.position.y = block.y || 0
-        
+
         this.scale.x = (block.w || UNIT) / UNIT
         this.scale.y = (block.h || UNIT) / UNIT
-        
+
         this.anchor.x = 0
         this.anchor.y = 0
-        
-        this.tint = block.color
-        
+
         this.isSlab = block.isSlab || false
         this.isPassable = block.isPassable || false
-        
+
         if(this.isSlab) {
             this.scale.y = 0.25
         }
@@ -523,7 +521,7 @@ export class Dialogue {
         this.texts = texts
         this.color = color
         this.pointer = 1
-        
+
         this.scene = scene
     }
     update(delta) {
