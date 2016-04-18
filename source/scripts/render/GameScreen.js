@@ -20,7 +20,7 @@ class DialogueBox extends React.Component {
         return (
             <div className="dialogue-box" style={this.style}>
                 <div className="portrait" style={this.portrait_style}/>
-                <div className="text">
+                <div className="text" style={{fontSize: "20em"}}>
                     {this.text}
                 </div>
             </div>

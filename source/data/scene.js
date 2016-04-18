@@ -72,29 +72,6 @@ export default {
             isPassable: true,
         }
     },
-    backgrounds: [
-        {
-            x: 0,
-            y: 0,
-            w: 35,
-            h: 9,
-            color: 0x7B9BA6,
-        },
-        {
-            x: 0,
-            y: 9*1,
-            w: 35,
-            h: 9,
-            color: 0x444444,
-        },
-        {
-            x: 0,
-            y: 9*2,
-            w: 35,
-            h: 9,
-            color: 0xCC0000,
-        }
-    ],
     objects: [
         {
             x: 10,
@@ -155,51 +132,17 @@ export default {
         //         }
         //     }
         // },
-        // {
-        //     x: 6,
-        //     y: 28,
-        //     color: 0x551A8B,
-        //     character: "partyboy",
-        //     dialogue: function() {
-        //         return ["PAAAAAAAARRRTY!"]
-        //     }
-        // },
-        // {
-        //     x: 3,
-        //     y: 28,
-        //     color: 0x44146f,
-        //     character: "partyboy",
-        //     dialogue: function() {
-        //         return ["PA-PA-PARRRTY!"]
-        //     }
-        // },
-        // {
-        //     x: 4,
-        //     y: 28,
-        //     color: 0x2A0D45,
-        //     character: "partyboy",
-        //     dialogue: function() {
-        //         return ["PAAA~AAARTY!"]
-        //     }
-        // },
-        // {
-        //     x: 5.5,
-        //     y: 28,
-        //     color: 0x44146f,
-        //     character: "partyboy",
-        //     dialogue: function() {
-        //         return ["PARTY PARTY PARTY!"]
-        //     }
-        // },
-        // {
-        //     x: 7,
-        //     y: 28,
-        //     color: 0x551A8B,
-        //     character: "partyboy",
-        //     dialogue: function() {
-        //         return ["I, too, like to party."]
-        //     }
-        // },
+        {
+            x: 9,
+            y: 8,
+            character: "red",
+            image: require("../images/npcs/little_red.gif"),
+            dialogue: function() {
+                return [
+                    "Hello, Wolfgang!"
+                ]
+            }
+        },
     ],
     items: [
         // {

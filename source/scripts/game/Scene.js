@@ -50,7 +50,7 @@ export default class Scene extends Pixi.Container {
             this.addChild(new Entity({
                 x: entity.x * UNIT,
                 y: entity.y * UNIT,
-                color: entity.color,
+                image: entity.image,
                 character: entity.character,
                 dialogue: entity.dialogue
             }))
@@ -206,8 +206,8 @@ export class Obj extends Sprite {
         this.position.x = object.x * UNIT
         this.position.y = object.y * UNIT
 
-        this.scale.x = 0.25
-        this.scale.y = 0.25
+        this.scale.x = 0.5
+        this.scale.y = 0.5
 
         this.anchor.x = 0.5
         this.anchor.y = 1
@@ -216,13 +216,16 @@ export class Obj extends Sprite {
 
 export class Entity extends Sprite {
     constructor(entity) {
-        super(require("../../images/player.png"))
+        super(entity.image)
 
         this.position.x = entity.x
         this.position.y = entity.y
 
         this.anchor.x = 0.5
         this.anchor.y = 1
+
+        this.scale.x = 0.5
+        this.scale.y = 0.5
 
         this.character = entity.character
         if(this.character == "boss") {
