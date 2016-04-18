@@ -189,28 +189,28 @@ export default {
             scale: 0.5
         },
     ],
-    items: [
-        {
-            x: 5,
-            y: 5,
-            image: require("../images/items/bowtie.png"),
-            name: "bowtie",
-            pin: {
-                x: 40,
-                y: 90,
-            }
-        },
-        {
-            x: 7,
-            y: 10,
-            image: require("../images/items/Propellor.png"),
-            name: "propellor",
-            pin: {
-                x: 40,
-                y: 142,
-            }
-        },
-    ]
+    // items: [
+    //     {
+    //         x: 5,
+    //         y: 5,
+    //         image: require("../images/items/bowtie.png"),
+    //         name: "bowtie",
+    //         pin: {
+    //             x: 40,
+    //             y: 90,
+    //         }
+    //     },
+    //     {
+    //         x: 7,
+    //         y: 10,
+    //         image: require("../images/items/Propellor.png"),
+    //         name: "propellor",
+    //         pin: {
+    //             x: 40,
+    //             y: 142,
+    //         }
+    //     },
+    // ]
 }
 
 function map(tiles = new String()) {
