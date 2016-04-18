@@ -214,9 +214,12 @@ export default {
             y: 8,
             character: "scientist",
             image: require("../images/npcs/scientist.gif"),
-            dialogue: function() {
+            dialogue: function(player) {
                 return [
-                    "You want to Visit the moon?  Sorry. He’s depressed tonight.  He wasn’t invited to the Black Hole party coming into our galaxy this week."
+                    "You want to Visit the moon?  Sorry. He’s depressed tonight.  He wasn’t invited to the Black Hole party coming into our galaxy this week.",
+                    () => {
+                        player.parent.done = true
+                    }
                 ]
             },
             scale: 0.5

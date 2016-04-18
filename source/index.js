@@ -39,6 +39,7 @@ import ReactDOM from "react-dom"
 
 import GameScreen from "./scripts/render/GameScreen.js"
 import TitleScreen from "./scripts/render/TitleScreen.js"
+import CreditsScreen from "./scripts/render/CreditsScreen.js"
 import AspectRatioFrame from "./scripts/render/AspectRatioFrame.js"
 
 class Mount extends React.Component {
@@ -47,7 +48,11 @@ class Mount extends React.Component {
             return (
                 <div className="frame">
                     {!!this.state.scene ? (
-                        <GameScreen scene={this.state.scene} frame={this.state.frame}/>
+                        this.state.scene.done == true ? (
+                            <CreditsScreen/>
+                        ) : (
+                            <GameScreen scene={this.state.scene} frame={this.state.frame}/>
+                        )
                     ) : (
                         <TitleScreen title={this.state.title}/>
                     )}
@@ -94,6 +99,6 @@ if(STAGE != "DEVELOPMENT") {
         new Audio(require("./music/wwolf2.mp3")),
         new Audio(require("./music/wwolf3.mp3")),
     ])
-    
+
     jukebox.play()
 }

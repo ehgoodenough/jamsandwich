@@ -25,3 +25,4 @@ html {
 
 @import "./styles/render/TitleScreen.scss";
 @import "./styles/render/GameScreen.scss";
+@import "./styles/render/CreditsScreen.scss";

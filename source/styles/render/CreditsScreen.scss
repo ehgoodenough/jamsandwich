@@ -1,0 +1,26 @@
+@keyframes roll {
+    from {
+        top: 0em;
+    }
+    to {
+        top: -1000em;
+    }
+}
+
+.credits.screen {
+    position: absolute;
+    animation-name: roll;
+    animation-duration: 30s;
+    animation-fill-mode: forwards;
+
+    img {
+        width: 100%;
+    }
+
+    #thanks {
+        width: 16 * 32em;
+        height: 9 * 32em;
+        background-color: 000;
+        text-align: center;
+    }
+}
