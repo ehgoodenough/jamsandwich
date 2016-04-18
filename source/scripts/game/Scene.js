@@ -19,7 +19,7 @@ export default class Scene extends Pixi.Container {
         for(var key in scene.map.blocks) {
             var tile = scene.map.blocks[key]
             this.blocks.addChild(new Block({
-                texture: scene.tileset[tile.symbol].texture,
+                texture: scene.tileset[tile.symbol],
                 isSlab: tile.symbol == "-",
                 x: tile.x * UNIT,
                 y: tile.y * UNIT,
@@ -72,7 +72,7 @@ export default class Scene extends Pixi.Container {
     }
     snapCamera() {
         var x = (this.player.position.x - (this.frame.width / 2))
-        var y = (this.player.position.y - (this.frame.height * (10/11)))
+        var y = Math.floor(this.player.position.y / this.frame.height) * this.frame.height
         y = Math.min(y, this.height - this.frame.height)
         x = Math.min(x, this.width - this.frame.width)
         x = Math.max(x, 0)
@@ -83,7 +83,7 @@ export default class Scene extends Pixi.Container {
     }
     panCamera() {
         var x = (this.player.position.x - (this.frame.width / 2))
-        var y = (this.player.position.y - (this.frame.height * (10/11)))
+        var y = Math.floor(this.player.position.y / this.frame.height) * this.frame.height
         y = Math.min(y, this.height - this.frame.height)
         x = Math.min(x, this.width - this.frame.width)
         x = Math.max(x, 0)

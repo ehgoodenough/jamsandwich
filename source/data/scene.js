@@ -6,7 +6,7 @@ export default {
         "o": Pixi.Texture.fromImage(require("../images/cafe/floor_03.png")),
         "X": Pixi.Texture.fromImage(require("../images/cafe/walltile_03.png")),
         "-": Pixi.Texture.fromImage(require("../images/cafe/floor_03.png")),
-        "&": Pixi.Texture.fromImage(require("../images/cafe/floor_03.png"))
+        "&": Pixi.Texture.fromImage(require("../images/world/BRICK_0001.png"))
     },
     backgrounds: [
         // {

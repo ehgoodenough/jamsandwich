@@ -8,8 +8,8 @@ import scene from "./data/scene.js"
 
 var state = {
     frame: {
-        width: 600,
-        height: 337.5
+        width: 16 * 32,
+        height: 9 * 32
     },
     title: {
         cursor: 0,
@@ -85,7 +85,7 @@ var loop = new Loop(function(delta) {
     } else {
         state.title.update(delta)
     }
-    
-    
+
+
     render.setState(state)
 })
