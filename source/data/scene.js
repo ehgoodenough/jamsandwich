@@ -4,20 +4,20 @@ export default {
     map: map(require("raw!./map.txt")),
     tileset: {
         "-": {
-            texture: Pixi.Texture.fromImage(require("../images/cafe/floor_03.png"))
+            image: require("../images/cafe/floor_03.png"),
         },
         "&": {
-            texture: Pixi.Texture.fromImage(require("../images/world/BRICK_0001.png"))
+            image: require("../images/world/BRICK_0001.png"),
         },
         "X": {
-            texture: Pixi.Texture.fromImage(require("../images/office/floor_02.png"))
+            image: require("../images/office/floor_02.png"),
         },
         "A": {
-            texture: Pixi.Texture.fromImage(require("../images/office/wallceiling_02.png")),
+            image: require("../images/office/wallceiling_02.png"),
             isPassable: true
         },
         "V": {
-            texture: Pixi.Texture.fromImage(require("../images/office/wallfloor_02.png")),
+            image: require("../images/office/wallfloor_02.png"),
             isPassable: true
         },
     },
@@ -48,7 +48,7 @@ export default {
         {
             x: 10,
             y: 8,
-            texture: Pixi.Texture.fromImage(require("../images/office/wastebin.png")),
+            image: require("../images/office/wastebin.png")
         }
     ],
     entities: [

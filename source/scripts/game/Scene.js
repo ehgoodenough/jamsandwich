@@ -1,4 +1,6 @@
 import Pixi from "pixi.js"
+import ShortID from "shortid"
+
 import Keyboard from "../utility/Keyboard"
 
 const UNIT = 32
@@ -10,16 +12,18 @@ export default class Scene extends Pixi.Container {
         this.frame = frame
 
         var backgrounds = new Pixi.Container()
+        backgrounds.id = "backgrounds"
         this.addChild(backgrounds)
 
         this.blocks = new Pixi.Container()
+        this.blocks.id = "blocks"
         this.addChild(this.blocks)
         // this.width = scene.map.width
         // this.height = scene.map.height
         for(var key in scene.map.blocks) {
             var tile = scene.map.blocks[key]
             this.blocks.addChild(new Block({
-                texture: scene.tileset[tile.symbol].texture,
+                image: scene.tileset[tile.symbol].image,
                 isPassable: scene.tileset[tile.symbol].isPassable,
                 isSlab: tile.symbol == "-",
                 x: tile.x * UNIT,
@@ -51,6 +55,7 @@ export default class Scene extends Pixi.Container {
         }
 
         this.objs = new Pixi.Container()
+        this.objs.id = "objects"
         this.addChild(this.objs)
         for(var key in scene.objects) {
             var obj = scene.objects[key]
@@ -134,6 +139,14 @@ export default class Scene extends Pixi.Container {
 }
 
 export class Sprite extends Pixi.Sprite {
+    constructor(image) {
+        // Pixi.Texture.fromImage(sprite.image)
+        var texture = Pixi.Texture.fromImage(image)
+        super(texture)
+
+        this.id = ShortID.generate()
+        this.image = image
+    }
     get x0() {
         return this.position.x - (this.width * this.anchor.x)
     }
@@ -186,7 +199,7 @@ const GRAVITY = 0.55
 
 export class Obj extends Sprite {
     constructor(object) {
-        super(object.texture)
+        super(object.image)
 
         this.position.x = object.x * UNIT
         this.position.y = object.y * UNIT
@@ -201,7 +214,7 @@ export class Obj extends Sprite {
 
 export class Entity extends Sprite {
     constructor(entity) {
-        super(Pixi.Texture.fromImage(require("../../images/player.png")))
+        super(require("../../images/player.png"))
 
         this.position.x = entity.x
         this.position.y = entity.y
@@ -268,13 +281,15 @@ export class Entity extends Sprite {
 
 export class Player extends Sprite {
     constructor(player) {
-        super(Pixi.Texture.fromImage(require("../../images/player.png")))
-
+        super(require("../../images/wolf/wolf.gif"))
         this.position.x = player.position.x || 0
         this.position.y = player.position.y || 0
 
         this.anchor.x = 0.5
         this.anchor.y = 1
+
+        this.scale.x = 0.5
+        this.scale.y = 0.5
 
         this.velocity = new Pixi.Point()
         this.maxvelocity = new Pixi.Point()
@@ -286,14 +301,17 @@ export class Player extends Sprite {
 
         this.jumpforce = -10
         this.acceleration = 2
+        this.direction = -1
 
         this.jumpheight = 0
 
         this.achievements = {}
 
-        // if(STAGE == "DEVELOPMENT") {
-        //     this.hasBeenScolded = true
-        // }
+        this.textures = {
+            "walk": Pixi.Texture.fromImage(require("../../images/wolf/wolf_walk.gif")),
+            "idle": Pixi.Texture.fromImage(require("../../images/wolf/wolf.gif")),
+            "air": Pixi.Texture.fromImage(require("../../images/wolf/wolf_midair.gif")),
+        }
     }
     update(delta) {
         if(!!this.parent.dialogue) {
@@ -311,13 +329,18 @@ export class Player extends Sprite {
                 if(this.velocity.x < -this.maxvelocity.x) {
                     this.velocity.x = -this.maxvelocity.x
                 }
-            }
-            if(Keyboard.isDown("D")
+                this.direction = -1
+                this.isMoving = true
+            } else if(Keyboard.isDown("D")
             || Keyboard.isDown("<right>")) {
                 this.velocity.x += this.acceleration
                 if(this.velocity.x > +this.maxvelocity.x) {
                     this.velocity.x = +this.maxvelocity.x
                 }
+                this.direction = +1
+                this.isMoving = true
+            } else {
+                this.isMoving = false
             }
 
             // poll input for jumping.
@@ -478,6 +501,22 @@ export class Player extends Sprite {
         //
         //     }
         // }
+
+        // if(Keyboard.isDown("T")) {
+        //     this.texture = this.textures.air
+        // } else if(Keyboard.isDown("Y")) {
+        //     this.texture = this.textures.walk
+        // } else {
+        //     this.texture = this.textures.idle
+        // }
+
+        if(this.jumpheight < 0) {
+            this.texture = this.textures.air
+        } else if(this.isMoving) {
+            this.texture = this.textures.walk
+        } else {
+            this.texture = this.textures.idle
+        }
     }
     addChild(object) {
         super.addChild(object)
@@ -503,7 +542,7 @@ export class Player extends Sprite {
 
 export class Item extends Sprite {
     constructor(item = new Object()) {
-        super(Pixi.Texture.fromImage(require("../../images/medium.png")))
+        super(require("../../images/medium.png"))
 
         this.position.x = item.position.x || 0
         this.position.y = item.position.y || 0
@@ -519,7 +558,7 @@ export class Item extends Sprite {
 
 export class Block extends Sprite {
     constructor(block = new Object()) {
-        super(block.texture || Pixi.Texture.fromImage(require("../../images/large.png")))
+        super(block.image || require("../../images/large.png"))
 
         this.position.x = block.x || 0
         this.position.y = block.y || 0

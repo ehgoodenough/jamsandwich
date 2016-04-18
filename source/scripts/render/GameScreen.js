@@ -1,12 +1,13 @@
 import React from "react"
 
 import PixiRenderer from "./PixiRenderer.js"
+import FauxPixiRenderer from "./FauxPixiRenderer.js"
 
 export default class GameScreen extends React.Component {
     render() {
         return (
             <div className="game screen">
-                <PixiRenderer display={this.props.scene} frame={this.props.frame}/>
+                <FauxPixiRenderer display={this.props.scene} frame={this.props.frame}/>
                 <DialogueBox dialogue={this.props.scene.dialogue}/>
                 <div className="message" key={this.props.scene.message}>{this.props.scene.message}</div>
             </div>
