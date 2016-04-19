@@ -127,7 +127,13 @@ export default {
             x: 6,
             y: 5,
             image: require("../images/bed2/painting.png")
-        }
+        },
+        {
+            x: 23 + 42 + 14 + 3 + 2,
+            y: 8,
+            character: "telescope",
+            image: require("../images/roof/scopetable.png"),
+        },
 
         //bed2
         //roof
@@ -217,12 +223,29 @@ export default {
             dialogue: function(player) {
                 return [
                     "You want to Visit the moon?  Sorry. He’s depressed tonight.  He wasn’t invited to the Black Hole party coming into our galaxy this week.",
-                    () => {
-                        player.parent.done = true
-                    }
+                    "Have you looked at my telescope?"
                 ]
             },
             scale: 0.5
+        },
+        {
+            x: 23 + 42 + 14 + 3 + 2,
+            y: 7.6,
+            character: "telescope",
+            image: require("../images/roof/tinyscope.png"),
+            dialogue: function(player) {
+                return [
+                    "Were you hoping for a bigger telescope?",
+                    "Sorry, we could only afford a small scope.",
+                    () => {
+                        window.setTimeout(() => {
+                            player.parent.done = true
+                        }, 1000)
+                    },
+                    ". . . . . . . .  .  .  .  .   .   .   . "
+                ]
+            },
+            scale: 1
         },
         {
             x: 24 + 42 - 7 + 2,
